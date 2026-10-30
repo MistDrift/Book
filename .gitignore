@@ -1,0 +1,57 @@
+# ============================================================
+# 图书管理系统 .gitignore
+# ============================================================
+
+# ---- Java / Maven / IDE ----
+target/
+*.class
+*.jar
+*.war
+.mvn/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+
+# ---- IDE ----
+.idea/
+.vscode/
+*.iml
+.settings/
+.project
+.classpath
+
+# ---- Trae / VS Code / 临时 ----
+.trae/
+.trae-html-share-packages/
+*.tmp
+*.bak
+*.swp
+*~
+
+# ---- 部署产物（可选提交）----
+bookstore-deploy.zip
+deploy/classes/
+deploy/lib/
+
+# ---- 数据库密钥（绝对不能提交）----
+# 把 db.properties 改名为 db.properties.example 并提交模板
+其他/src/main/resources/db.properties
+deploy/classes/db.properties
+
+# ---- 日志 ----
+*.log
+logs/
+
+# ---- 系统文件 ----
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ---- Node / npm ----
+node_modules/
+npm-debug.log*
+
+# ---- PowerShell 脚本产物 ----
+*.zip.179*.tmp
+fetch_progress.json

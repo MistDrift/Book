@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书管理系统 - 用户管理</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        
+        .container { display: flex; min-height: 100vh; }
+        
+        .header {
+            position: fixed; top: 0; left: 250px; right: 0; height: 60px;
+            background: white; display: flex; justify-content: space-between;
+            align-items: center; padding: 0 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        
+        .sidebar {
+            width: 250px; background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+            min-height: 100vh; padding-top: 60px; position: fixed; left: 0; top: 0;
+        }
+        
+        .sidebar ul { list-style: none; }
+        .sidebar ul li a {
+            display: block; padding: 15px 20px; color: #ecf0f1; text-decoration: none;
+            font-size: 14px; transition: background 0.3s;
+        }
+        .sidebar ul li a:hover, .sidebar ul li a.active { background: rgba(255,255,255,0.1); }
+        
+        .main-content {
+            margin-left: 250px; margin-top: 60px; padding: 30px; width: calc(100% - 250px);
+        }
+        
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        .btn {
+            padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;
+            font-size: 14px; transition: background 0.3s;
+        }
+        
+        .btn-primary { background: #3498db; color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-danger:hover { background: #c0392b; }
+        
+        .btn-edit { background: #3498db; color: white; padding: 6px 12px; font-size: 12px; margin-right: 5px; }
+        .btn-delete { background: #e74c3c; color: white; padding: 6px 12px; font-size: 12px; }
+        
+        .table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .table th { background: #f8f9fa; font-weight: 600; color: #555; }
+        .table tr:hover { background: #f8f9fa; }
+        
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;
+        }
+        
+        .modal.show { display: flex; }
+        
+        .modal-content {
+            background: white; width: 90%; max-width: 500px; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px; border-bottom: 1px solid #eee;
+        }
+        
+        .close-btn {
+            background: none; border: none; font-size: 24px; cursor: pointer;
+            color: #999; transition: color 0.3s;
+        }
+        
+        .close-btn:hover { color: #333; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-actions {
+            display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;
+            padding-top: 20px; border-top: 1px solid #eee;
+        }
+        
+        .btn-secondary { background: #95a5a6; color: white; }
+        .btn-secondary:hover { background: #7f8c8d; }
+        
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-info span { font-size: 14px; }
+        .user-info span:first-child { font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">📚 图书管理系统</div>
+            <div class="user-info">
+                <span id="userName"></span>
+                <span id="userRole"></span>
+                <button class="btn btn-danger" onclick="logout()">退出</button>
+            </div>
+        </header>
+        
+        <nav class="sidebar">
+            <ul>
+                <li><a href="home.html">首页</a></li>
+                <li><a href="dashboard.html" class="admin-only" style="display:none">数据看板</a></li>
+                <li><a href="book-list.html" class="admin-only" style="display:none">图书管理</a></li>
+                <li><a href="book-search.html">图书查询</a></li>
+                <li><a href="borrow-list.html">借阅管理</a></li>
+                <li><a href="borrow-apply.html">借阅申请</a></li>
+                <li><a href="reserve.html">预约管理</a></li>
+                <li><a href="fine.html">罚金管理</a></li>
+                <li><a href="claim.html">遗失理赔</a></li>
+                <li><a href="inventory.html" class="admin-only" style="display:none">馆藏盘点</a></li>
+                <li><a href="suggestion.html">图书荐购</a></li>
+                <li><a href="notice.html">消息中心</a></li>
+                <li><a href="credit.html">信用管理</a></li>
+                <li><a href="user-list.html" class="admin-only active" style="display:none">用户管理</a></li>
+                <li><a href="tier-list.html" class="admin-only" style="display:none">等级管理</a></li>
+                <li><a href="perm-list.html" class="admin-only" style="display:none">权限管理</a></li>
+                <li><a href="log-list.html" class="admin-only" style="display:none">操作日志</a></li>
+                <li><a href="profile.html">个人设置</a></li>
+            </ul>
+        </nav>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <h2>用户管理</h2>
+                <button class="btn btn-primary" onclick="showAddModal()">添加用户</button>
+            </div>
+            
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>姓名</th>
+                        <th>角色</th>
+                        <th>状态</th>
+                        <th>等级</th>
+                        <th>信用分</th>
+                        <th>邮箱</th>
+                        <th>电话</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="userTable">
+                </tbody>
+            </table>
+        </main>
+    </div>
+    
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">添加用户</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="userForm" style="padding: 20px;">
+                <input type="hidden" id="userId">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="name">姓名</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="role">角色</label>
+                    <select id="role" required>
+                        <option value="0">社会人员</option>
+                        <option value="1">管理员</option>
+                        <option value="2">线上学员</option>
+                        <option value="3">教师</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="email">邮箱</label>
+                    <input type="email" id="email">
+                </div>
+                <div class="form-group">
+                    <label for="phone">电话</label>
+                    <input type="tel" id="phone">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="js/config.js"></script>
+    <script>
+        let currentUser = null;
+        let users = [];
+
+        function initApp() {
+            console.log('user-list 开始登录验证');
+            const storedUser = localStorage.getItem('user');
+            console.log('localStorage user:', storedUser);
+            
+            if (!storedUser || !getToken()) {
+                console.log('没有用户信息，跳转登录');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            try {
+                currentUser = JSON.parse(storedUser);
+                console.log('解析用户:', currentUser);
+                
+                if (!currentUser || !currentUser.username) {
+                    console.log('用户数据无效');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                // 确保role字段存在
+                if (currentUser.role === undefined) {
+                    currentUser.role = 0;
+                }
+                
+                // 只有管理员才能访问用户管理页面
+                if (!isAdmin(currentUser)) {
+                    console.log('非管理员，跳转到首页');
+                    window.location.href = 'home.html';
+                    return;
+                }
+                
+                console.log('验证通过，role:', currentUser.role);
+                
+                document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+                document.getElementById('userRole').textContent = '(管理员)';
+                
+                // 管理员显示管理员专属菜单
+                document.querySelectorAll('.admin-only').forEach(function(link) {
+                    link.style.display = 'block';
+                });
+                
+                loadUsers();
+
+                document.getElementById('userForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    saveUser();
+                });
+            } catch (e) {
+                console.error('验证出错:', e);
+                window.location.href = 'index.html';
+            }
+        }
+
+        function logout() {
+            apiFetch('/api/logout', { method: 'POST' }).catch(function() {});
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        }
+
+        function roleText(role) { return roleName(role); }
+
+        function loadUsers() {
+            apiFetch('/api/user')
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (!Array.isArray(data)) {
+                    alert((data && data.message) || '用户列表加载失败');
+                    return;
+                }
+                users = data;
+                renderUsers(users);
+            })
+            .catch(function() {
+                alert('网络错误，用户列表加载失败');
+            });
+        }
+
+        function renderUsers(list) {
+            const tbody = document.getElementById('userTable');
+            tbody.innerHTML = '';
+
+            if (!list || list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;">暂无用户</td></tr>';
+                return;
+            }
+            
+            list.forEach(user => {
+                const enabled = user.status !== 0;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.name || '-'}</td>
+                    <td>${roleText(user.role)}</td>
+                    <td>${enabled ? '正常' : '已禁用'}</td>
+                    <td>${user.tierName || (user.tierId != null ? user.tierId : '-')}</td>
+                    <td>${user.creditScore != null ? user.creditScore : (user.credit != null ? user.credit : '-')}</td>
+                    <td>${user.email || '-'}</td>
+                    <td>${user.phone || '-'}</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="showEditModal(${user.id})">编辑</button>
+                        <button class="btn btn-edit" onclick="toggleStatus(${user.id}, ${enabled ? 0 : 1})">${enabled ? '禁用' : '启用'}</button>
+                        <button class="btn btn-delete" onclick="deleteUser(${user.id})">删除</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showAddModal() {
+            document.getElementById('modalTitle').textContent = '添加用户';
+            document.getElementById('userId').value = '';
+            document.getElementById('username').value = '';
+            document.getElementById('username').disabled = false;
+            document.getElementById('password').value = '';
+            document.getElementById('password').required = true;
+            document.getElementById('name').value = '';
+            document.getElementById('role').value = '0';
+            document.getElementById('email').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        function showEditModal(id) {
+            const user = users.find(u => u.id === id);
+            if (user) {
+                document.getElementById('modalTitle').textContent = '编辑用户';
+                document.getElementById('userId').value = user.id;
+                document.getElementById('username').value = user.username;
+                document.getElementById('username').disabled = true;
+                document.getElementById('password').value = '';
+                document.getElementById('password').required = false;
+                document.getElementById('name').value = user.name;
+                document.getElementById('role').value = user.role;
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('phone').value = user.phone || '';
+                document.getElementById('userModal').classList.add('show');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').classList.remove('show');
+        }
+
+        function saveUser() {
+            const id = document.getElementById('userId').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+            const role = document.getElementById('role').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            
+            if (id) {
+                updateUser(id, name, email, phone, role, password);
+            } else {
+                addUser(username, password, name, role, email, phone);
+            }
+        }
+
+        function updateUser(id, name, email, phone, role, password) {
+            // 后端 doPut 通过 request.getParameter 读取参数，参数放 query string
+            const params = new URLSearchParams({ id: id, name: name, email: email, phone: phone, role: role });
+            if (password) params.set('password', password);
+            apiFetch('/api/user/' + id + '?' + params.toString(), { method: 'PUT' })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                alert(data.message || (data.success ? '更新成功' : '更新失败'));
+                if (data.success) {
+                    closeModal();
+                    loadUsers();
+                }
+            })
+            .catch(function() {
+                alert('网络错误，更新失败');
+            });
+        }
+
+        function addUser(username, password, name, role, email, phone) {
+            if (!password || password.length < 3) {
+                alert('密码至少需要3个字符');
+                return;
+            }
+            apiFetch('/api/user', {
+                method: 'POST',
+                body: new URLSearchParams({ username: username, password: password, name: name, role: role, email: email, phone: phone })
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                alert(data.message || (data.success ? '添加成功' : '添加失败'));
+                if (data.success) {
+                    closeModal();
+                    loadUsers();
+                }
+            })
+            .catch(function() {
+                alert('网络错误，添加失败');
+            });
+            
+        }
+
+        function toggleStatus(id, status) {
+            apiFetch('/api/user/' + id + '/status?status=' + status, { method: 'PUT' })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                alert(data.message || (data.success ? '操作成功' : '操作失败'));
+                if (data.success) loadUsers();
+            })
+            .catch(function() {
+                alert('网络错误，操作失败');
+            });
+        }
+
+        function deleteUser(id) {
+            if (!confirm('确定要删除这个用户吗？')) return;
+            
+            apiFetch('/api/user/' + id, { method: 'DELETE' })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                alert(data.message || (data.success ? '删除成功' : '删除失败'));
+                if (data.success) loadUsers();
+            })
+            .catch(function() {
+                alert('网络错误，删除失败');
+            });
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+<script>if(!guardAccess()){}</script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书管理系统 - 借阅申请管理</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        
+        .container { display: flex; min-height: 100vh; }
+        
+        .header {
+            position: fixed; top: 0; left: 250px; right: 0; height: 60px;
+            background: white; display: flex; justify-content: space-between;
+            align-items: center; padding: 0 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        
+        .sidebar {
+            width: 250px; background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+            min-height: 100vh; padding-top: 60px; position: fixed; left: 0; top: 0;
+        }
+        
+        .sidebar ul { list-style: none; }
+        .sidebar ul li a {
+            display: block; padding: 15px 20px; color: #ecf0f1; text-decoration: none;
+            font-size: 14px; transition: background 0.3s;
+        }
+        .sidebar ul li a:hover, .sidebar ul li a.active { background: rgba(255,255,255,0.1); }
+        
+        .main-content {
+            margin-left: 250px; margin-top: 60px; padding: 30px; width: calc(100% - 250px);
+        }
+        
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        .btn {
+            padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;
+            font-size: 14px; transition: background 0.3s;
+        }
+        
+        .btn-primary { background: #3498db; color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-danger:hover { background: #c0392b; }
+        
+        .btn-success { background: #27ae60; color: white; padding: 6px 12px; font-size: 12px; margin-right: 5px; }
+        .btn-success:hover { background: #2ecc71; }
+        
+        .btn-warning { background: #f39c12; color: white; padding: 6px 12px; font-size: 12px; }
+        .btn-warning:hover { background: #e67e22; }
+        
+        .table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .table th { background: #f8f9fa; font-weight: 600; color: #555; }
+        .table tr:hover { background: #f8f9fa; }
+        
+        .status-pending { color: #f39c12; font-weight: 600; }
+        .status-accepted { color: #27ae60; font-weight: 600; }
+        .status-rejected { color: #e74c3c; font-weight: 600; }
+        .status-borrowing { color: #3498db; font-weight: 600; }
+        .status-returned { color: #27ae60; font-weight: 600; }
+        .status-overdue { color: #e74c3c; font-weight: 600; }
+        
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-info span { font-size: 14px; }
+        .user-info span:first-child { font-weight: 600; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { padding: 8px 16px; border: none; background: #fff; border-radius: 4px; cursor: pointer; }
+        .tab.active { background: #3498db; color: white; }
+        
+        .empty-state { text-align: center; padding: 40px; color: #999; }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe; margin: 15% auto; padding: 20px;
+            border: 1px solid #888; width: 400px; border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;
+        }
+        
+        .close-btn {
+            color: #aaa; float: right; font-size: 28px; font-weight: bold;
+            background: none; border: none; cursor: pointer;
+        }
+        
+        .close-btn:hover, .close-btn:focus { color: black; text-decoration: none; cursor: pointer; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .form-group select {
+            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        
+        .btn-secondary { background: #95a5a6; color: white; }
+        .btn-secondary:hover { background: #7f8c8d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">📚 图书管理系统</div>
+            <div class="user-info">
+                <span id="userName"></span>
+                <span id="userRole"></span>
+                <button class="btn btn-danger" onclick="logout()">退出</button>
+            </div>
+        </header>
+        
+        <nav class="sidebar">
+            <ul>
+                <li><a href="home.html">首页</a></li>
+                <li><a href="dashboard.html" class="admin-only" style="display:none">数据看板</a></li>
+                <li><a href="book-list.html" class="admin-only" style="display:none">图书管理</a></li>
+                <li><a href="book-search.html">图书查询</a></li>
+                <li><a href="borrow-list.html">借阅管理</a></li>
+                <li><a href="borrow-apply.html" class="active">借阅申请</a></li>
+                <li><a href="reserve.html">预约管理</a></li>
+                <li><a href="fine.html">罚金管理</a></li>
+                <li><a href="claim.html">遗失理赔</a></li>
+                <li><a href="inventory.html" class="admin-only" style="display:none">馆藏盘点</a></li>
+                <li><a href="suggestion.html">图书荐购</a></li>
+                <li><a href="notice.html">消息中心</a></li>
+                <li><a href="credit.html">信用管理</a></li>
+                <li><a href="user-list.html" class="admin-only" style="display:none">用户管理</a></li>
+                <li><a href="tier-list.html" class="admin-only" style="display:none">等级管理</a></li>
+                <li><a href="perm-list.html" class="admin-only" style="display:none">权限管理</a></li>
+                <li><a href="log-list.html" class="admin-only" style="display:none">操作日志</a></li>
+                <li><a href="profile.html">个人设置</a></li>
+            </ul>
+        </nav>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <h2>借阅申请管理</h2>
+                <button class="btn btn-primary" onclick="showApplyModal()" id="applyBtn">申请借阅</button>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('borrowing')">借阅中</button>
+                <button class="tab" onclick="showTab('returned')">已归还</button>
+                <button class="tab" onclick="showTab('overdue')">已逾期</button>
+                <button class="tab" onclick="showTab('all')">全部</button>
+            </div>
+            
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>书名</th>
+                        <th>申请人</th>
+                        <th>申请日期</th>
+                        <th>状态</th>
+                        <th>处理时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="applyTable">
+                </tbody>
+            </table>
+        </main>
+    </div>
+    
+    <!-- 借阅申请模态框 -->
+    <div class="modal" id="applyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>申请借阅图书</h3>
+                <button class="close-btn" onclick="closeApplyModal()">&times;</button>
+            </div>
+            <form id="applyForm">
+                <div class="form-group">
+                    <label for="bookSelect">选择图书</label>
+                    <select id="bookSelect" required>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeApplyModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">提交申请</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="js/config.js"></script>
+    <script>
+        let currentUser = null;
+        let currentTab = 'borrowing';
+
+        // 借阅状态：0借阅中 1已归还（逾期为客户端按 dueDate 判断）
+        const STATUS_MAP = {
+            0: { text: '借阅中', class: 'status-borrowing' },
+            1: { text: '已归还', class: 'status-returned' }
+        };
+
+        // 日期格式化：毫秒时间戳或日期字符串 -> yyyy-MM-dd
+        function formatDate(v) {
+            if (v === null || v === undefined || v === '') return '-';
+            let d;
+            if (typeof v === 'number') {
+                d = new Date(v);
+            } else if (/^\d+$/.test(String(v))) {
+                d = new Date(parseInt(v));
+            } else {
+                d = new Date(v);
+            }
+            if (isNaN(d.getTime())) return '-';
+            const p = n => String(n).padStart(2, '0');
+            return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+        }
+
+        function isOverdue(app) {
+            return app.status === 0 && app.dueDate && new Date(app.dueDate) < new Date();
+        }
+        
+        // Mock图书数据（备用）
+        const mockBooks = [
+            { id: 1, title: 'Java编程思想', author: 'Bruce Eckel', stock: 5 },
+            { id: 2, title: 'Python编程从入门到实践', author: 'Eric Matthes', stock: 3 },
+            { id: 3, title: '深入理解计算机系统', author: 'Randal E.Bryant', stock: 2 },
+            { id: 4, title: '深度学习入门', author: '斋藤康毅', stock: 4 },
+            { id: 5, title: '设计模式', author: 'Erich Gamma', stock: 3 },
+            { id: 6, title: '算法导论', author: 'Thomas H.Cormen', stock: 2 },
+            { id: 7, title: 'JavaScript高级程序设计', author: 'Nicholas C.Zakas', stock: 4 },
+            { id: 8, title: '数据结构与算法分析', author: 'Mark Allen Weiss', stock: 3 }
+        ];
+        
+        // 默认借阅申请数据
+        const defaultApplications = [
+            { id: 1, bookTitle: 'Java编程思想', bookId: 1, username: 'student1', borrowDate: '2026-05-20', returnDate: null, status: 0 },     // 待审核
+            { id: 2, bookTitle: '深入理解计算机系统', bookId: 3, username: 'student1', borrowDate: '2026-05-19', returnDate: '2026-05-25', status: 2 }, // 已归还
+            { id: 3, bookTitle: 'Python编程从入门到实践', bookId: 2, username: 'teacher1', borrowDate: '2026-05-18', returnDate: null, status: 1 }, // 借阅中
+            { id: 4, bookTitle: '算法导论', bookId: 6, username: 'user1', borrowDate: '2026-05-22', returnDate: null, status: 0 }, // 待审核
+            { id: 5, bookTitle: '设计模式', bookId: 5, username: 'user1', borrowDate: '2026-05-21', returnDate: null, status: 1 }  // 借阅中
+        ];
+        
+        // 从localStorage加载借阅记录，若无则使用默认数据
+        let mockApplications = loadApplicationsFromStorage();
+
+        function initApp() {
+            console.log('borrow-apply 开始登录验证');
+            const storedUser = localStorage.getItem('user');
+            console.log('localStorage user:', storedUser);
+            
+            if (!storedUser || !getToken()) {
+                console.log('没有用户信息，跳转登录');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            try {
+                currentUser = JSON.parse(storedUser);
+                console.log('解析用户:', currentUser);
+                
+                if (!currentUser || !currentUser.username) {
+                    console.log('用户数据无效');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                // 确保role字段存在
+                if (currentUser.role === undefined) {
+                    currentUser.role = 0;
+                }
+                
+                console.log('验证通过，role:', currentUser.role);
+                
+                document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+                document.getElementById('userRole').textContent = roleTag(currentUser.role);
+                
+                // 管理员显示管理员专属菜单
+                document.querySelectorAll('.admin-only').forEach(function(link) {
+                    link.style.display = isAdmin(currentUser) ? 'block' : 'none';
+                });
+                
+                // 检查是否有新的借阅记录需要添加
+                const newBorrow = localStorage.getItem('newBorrow');
+                if (newBorrow) {
+                    try {
+                        const borrowData = JSON.parse(newBorrow);
+                        const newApplication = {
+                            id: borrowData.id,
+                            bookId: borrowData.bookId,
+                            bookTitle: borrowData.bookTitle,
+                            username: currentUser.username || currentUser.name,
+                            borrowDate: borrowData.borrowDate,
+                            returnDate: null,
+                            status: 0
+                        };
+                        mockApplications.unshift(newApplication);
+                        localStorage.removeItem('newBorrow');
+                        saveApplicationsToStorage();
+                    } catch (e) {
+                        console.error('解析新借阅记录失败:', e);
+                    }
+                }
+                
+                loadApplications();
+                
+            } catch (e) {
+                console.error('验证出错:', e);
+                window.location.href = 'index.html';
+            }
+        }
+
+        function logout() {
+            apiFetch('/api/logout', { method: 'POST' }).catch(function() {});
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        }
+
+        function showTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            loadApplications();
+        }
+
+        function loadApplications() {
+            let url = '/api/borrow';
+            // 借阅中/已归还走后端 status 筛选；已逾期拉全部后客户端过滤
+            const statusMap = { borrowing: 0, returned: 1 };
+            if (statusMap[currentTab] !== undefined) {
+                url += `?status=${statusMap[currentTab]}`;
+            }
+
+            apiFetch(url)
+            .then(response => response.json())
+            .then(data => {
+                let applications = Array.isArray(data) ? data : [];
+
+                // 普通用户只能看到自己的借阅申请
+                if (currentUser && !isAdmin(currentUser)) {
+                    applications = applications.filter(a => a.username === currentUser.username);
+                }
+
+                // 已逾期：借阅中且应还日期早于今天
+                if (currentTab === 'overdue') {
+                    applications = applications.filter(isOverdue);
+                }
+
+                renderApplications(applications);
+            })
+            .catch(error => {
+                console.error('加载借阅记录失败:', error);
+                renderApplications([]);
+            });
+        }
+        
+        // 显示借阅申请模态框
+        function showApplyModal() {
+            const modal = document.getElementById('applyModal');
+            const select = document.getElementById('bookSelect');
+            
+            // 清空并从后端获取图书列表
+            select.innerHTML = '<option value="">加载中...</option>';
+            
+            apiFetch('/api/book')
+            .then(response => response.json())
+            .then(books => {
+                select.innerHTML = '<option value="">请选择图书</option>';
+                books.forEach(book => {
+                    if (book.stock > 0) {
+                        const option = document.createElement('option');
+                        option.value = book.id;
+                        option.textContent = `${book.title} - ${book.author} (库存: ${book.stock})`;
+                        select.appendChild(option);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('加载图书列表失败，使用本地数据:', error);
+                // API调用失败时使用mock数据
+                select.innerHTML = '<option value="">请选择图书</option>';
+                mockBooks.forEach(book => {
+                    if (book.stock > 0) {
+                        const option = document.createElement('option');
+                        option.value = book.id;
+                        option.textContent = `${book.title} - ${book.author} (库存: ${book.stock})`;
+                        select.appendChild(option);
+                    }
+                });
+            });
+            
+            modal.style.display = 'block';
+        }
+        
+        // 关闭借阅申请模态框
+        function closeApplyModal() {
+            document.getElementById('applyModal').style.display = 'none';
+            document.getElementById('applyForm').reset();
+        }
+        
+        // 提交借阅申请
+        document.getElementById('applyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 检查借阅数量限制
+            const currentBorrowCount = mockApplications.filter(a => {
+                return a.status === 0 && (a.username === currentUser.username || a.username === currentUser.name);
+            }).length;
+            const MAX_BORROW = 3;
+            
+            if (currentBorrowCount >= MAX_BORROW) {
+                alert(`借阅失败：您当前已借阅${currentBorrowCount}本，最多可借阅${MAX_BORROW}本`);
+                return;
+            }
+            
+            const bookId = parseInt(document.getElementById('bookSelect').value);
+            
+            if (!bookId) {
+                alert('请选择一本图书');
+                return;
+            }
+            
+            const book = mockBooks.find(b => b.id === bookId);
+            
+            apiFetch('/api/borrow', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `bookId=${bookId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeApplyModal();
+                    loadApplications();
+                    alert('借阅申请已提交！');
+                } else {
+                    alert(data.message || '借阅失败');
+                }
+            })
+            .catch(error => {
+                console.error('提交借阅申请失败，使用本地数据:', error);
+                // API调用失败时使用mock数据模拟
+                const newApplication = {
+                    id: Date.now(),
+                    bookId: book.id,
+                    bookTitle: book.title,
+                    username: currentUser.username || currentUser.name,
+                    borrowDate: new Date().toLocaleDateString(),
+                    returnDate: null,
+                    status: 0
+                };
+                
+                mockApplications.unshift(newApplication);
+                saveApplicationsToStorage();
+                closeApplyModal();
+                loadApplications();
+                alert('借阅申请已提交！');
+            });
+        });
+        
+        // 点击模态框外部关闭
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('applyModal');
+            if (e.target === modal) {
+                closeApplyModal();
+            }
+        });
+
+        function renderApplications(applications) {
+            const tbody = document.getElementById('applyTable');
+            
+            if (!Array.isArray(applications) || applications.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">暂无借阅记录</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            
+            applications.forEach(app => {
+                const overdue = isOverdue(app);
+                const status = overdue ? { text: '已逾期', class: 'status-overdue' }
+                    : (STATUS_MAP[app.status] || { text: '未知', class: 'status-pending' });
+                // 借阅中的本人记录可续借/归还（借阅为读者直借，无审批流）
+                const canOperate = app.status === 0 && currentUser &&
+                    (!isAdmin(currentUser) || app.username === currentUser.username);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${app.bookTitle || '未知图书'}</td>
+                    <td>${app.username || '未知用户'}</td>
+                    <td>${formatDate(app.borrowDate)}</td>
+                    <td><span class="${status.class}">${status.text}</span></td>
+                    <td>${formatDate(app.returnDate)}</td>
+                    <td>
+                        ${canOperate ? `
+                            <button class="btn btn-success" onclick="renewBorrow(${app.id})">续借</button>
+                            <button class="btn btn-warning" onclick="returnBook(${app.id})">归还</button>
+                        ` : '-'}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renewBorrow(id) {
+            if (!confirm('确定续借该图书吗？')) return;
+
+            apiFetch(`/api/borrow/${id}/renew`, {
+                method: 'PUT'
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message || (data.success ? '续借成功' : '续借失败'));
+                if (data.success) loadApplications();
+            })
+            .catch(error => {
+                console.error('续借失败:', error);
+                alert('续借失败');
+            });
+        }
+
+        function returnBook(id) {
+            if (!confirm('确定归还该图书吗？')) return;
+            
+            apiFetch(`/api/borrow/${id}`, {
+                method: 'PUT'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 更新本地数据
+                    const app = mockApplications.find(a => a.id === id);
+                    if (app) {
+                        app.status = 2;
+                        app.returnDate = new Date().toLocaleDateString();
+                        saveApplicationsToStorage();
+                    }
+                    loadApplications();
+                    alert('图书已归还！');
+                } else {
+                    alert(data.message || '归还失败');
+                }
+            })
+            .catch(error => {
+                console.error('归还图书失败，使用本地数据:', error);
+                // API调用失败时使用本地数据模拟
+                const app = mockApplications.find(a => a.id === id);
+                if (app) {
+                    app.status = 2;
+                    app.returnDate = new Date().toLocaleDateString();
+                    saveApplicationsToStorage();
+                }
+                loadApplications();
+                alert('图书已归还！');
+            });
+        }
+        
+        // 从localStorage加载借阅记录
+        function loadApplicationsFromStorage() {
+            const stored = localStorage.getItem('borrowApplications');
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch (e) {
+                    console.error('解析借阅记录失败:', e);
+                }
+            }
+            // 返回默认数据并保存到localStorage
+            localStorage.setItem('borrowApplications', JSON.stringify(defaultApplications));
+            return [...defaultApplications];
+        }
+        
+        // 保存借阅记录到localStorage
+        function saveApplicationsToStorage() {
+            localStorage.setItem('borrowApplications', JSON.stringify(mockApplications));
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+<script>if(!guardAccess()){}</script>
+</body>
+</html>

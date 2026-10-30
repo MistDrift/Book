@@ -1,0 +1,9 @@
+# Database Configuration
+# 复制此文件为 db.properties 后修改为你的真实配置
+#
+# Example:
+#   cp db.properties.example db.properties
+
+db.url=jdbc:mysql://localhost:3306/db_book?useSSL=false&serverTimezone=UTC&characterEncoding=utf8&allowPublicKeyRetrieval=true
+db.username=root
+db.password=YOUR_PASSWORD_HERE

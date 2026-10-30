@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书管理系统 - 统一登录</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="login-container">
+        <!-- 背景装饰 -->
+        <div class="bg-decoration">
+            <div class="gradient-circle circle-1"></div>
+            <div class="gradient-circle circle-2"></div>
+            <div class="gradient-circle circle-3"></div>
+            <div class="gradient-circle circle-4"></div>
+        </div>
+        
+        <!-- 登录卡片 -->
+        <div class="login-card">
+            <!-- 标题 -->
+            <div class="login-header">
+                <h1 class="login-title">统一登录</h1>
+                <div class="title-divider"></div>
+            </div>
+            
+            <!-- 用户类型切换 -->
+            <div class="user-type-tabs">
+                <button class="type-tab active" id="userTab" onclick="switchTab('user')">
+                    用户登录
+                </button>
+                <button class="type-tab" id="adminTab" onclick="switchTab('admin')">
+                    管理员登录
+                </button>
+            </div>
+            
+            <!-- 用户角色选择 -->
+            <div class="role-selector" id="userRoleSelector">
+                <button class="role-btn active">线上学员</button>
+                <button class="role-btn">教师</button>
+                <button class="role-btn">社会人员</button>
+            </div>
+            
+            <!-- 登录表单 -->
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <input type="text" id="username" name="username" class="form-input" placeholder="请输入用户名" required>
+                    <label class="form-label" for="username">用户名</label>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" id="password" name="password" class="form-input" placeholder="请输入密码" required>
+                    <label class="form-label" for="password">密码</label>
+                </div>
+                
+                <button type="submit" class="login-btn">
+                    立即登录
+                </button>
+            </form>
+            
+            <!-- 注册链接 -->
+            <div class="register-link">
+                <span>没有账号？</span>
+                <a href="register.html" class="register-btn">请注册</a>
+            </div>
+            
+            <!-- 演示账号 -->
+            <div class="demo-info">
+                <p class="demo-label">🔑 演示账号</p>
+                <p>管理员: <span>admin</span> / <span>admin123</span></p>
+                <p>用户: <span>user1</span> / <span>user123</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/config.js"></script>
+    <script>
+        function switchTab(tab) {
+            const userTab = document.getElementById('userTab');
+            const adminTab = document.getElementById('adminTab');
+            const userRoleSelector = document.getElementById('userRoleSelector');
+            
+            if (tab === 'user') {
+                userTab.classList.add('active');
+                adminTab.classList.remove('active');
+                userRoleSelector.style.display = 'flex';
+            } else {
+                adminTab.classList.add('active');
+                userTab.classList.remove('active');
+                userRoleSelector.style.display = 'none';
+            }
+        }
+        
+        // 角色切换
+        document.querySelectorAll('.role-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // 登录表单提交（调用后端真实接口 + 身份预校验）
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // 1) 判断当前选中的 tab（管理员登录 / 用户登录）
+            const isAdminTab = document.getElementById('adminTab').classList.contains('active');
+            // 2) 用户登录时读取角色选择器里选中的身份
+            let expectedRole = null;
+            if (isAdminTab) {
+                expectedRole = Roles.ADMIN;
+            } else {
+                const roleText = document.querySelector('.role-btn.active') ?
+                                 document.querySelector('.role-btn.active').textContent.trim() : '';
+                const map = { '线上学员': Roles.STUDENT, '教师': Roles.TEACHER, '社会人员': Roles.SOCIAL };
+                expectedRole = map[roleText] != null ? map[roleText] : -1;
+            }
+
+            apiFetch('/api/login', {
+                method: 'POST',
+                body: new URLSearchParams({ username: username, password: password })
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                if (!data.success) {
+                    reportLoginResult(false, username, '账号密码错误', null);
+                    alert(data.message || '用户名或密码错误');
+                    return;
+                }
+                // ===== 登录成功 → 身份预校验 =====
+                const realRole = parseRole(data.user && data.user.role);
+                let roleLabel = roleName(realRole);
+
+                if (expectedRole === null || expectedRole === -1) {
+                    alert('请选择登录身份');
+                    reportLoginResult(false, username, '未选择身份', data.user);
+                    return;
+                }
+                if (realRole !== expectedRole) {
+                    // 身份与实际 role 不匹配 → 拒绝登录并写审计日志
+                    alert('身份选择不匹配\n当前账号身份为「' + roleLabel + '」，' +
+                          '请选择正确的登录 tab / 身份类型');
+                    reportLoginResult(false, username,
+                        '身份选择不匹配（expected=' + expectedRole + ', real=' + realRole + '）', data.user);
+                    return;
+                }
+
+                // 校验通过 → 落盘 + 审计 + 跳转
+                localStorage.setItem('user', JSON.stringify(data.user));
+                localStorage.setItem('token', data.token);
+                reportLoginResult(true, username, '登录成功', data.user);
+                window.location.href = 'home.html';
+            })
+            .catch(err => {
+                alert('无法连接后端服务，请确认后端已启动（http://localhost:8080）');
+            });
+        });
+
+        // 登录审计：上报到 /api/log/（失败也允许写，因为此时还没 token，用后端 AuditFilter 兜底？
+        // 不行，前端 fetch 需要 token → 登录失败时在本地 console 记录即可，成功时调用 reportAccess）
+        function reportLoginResult(success, username, detail, user) {
+            const payload = {
+                action: success ? 'LOGIN_OK' : 'LOGIN_DENIED',
+                target: 'index.html',
+                detail: username + ' | ' + detail,
+                level: success ? 'INFO' : 'WARN'
+            };
+            if (success && user) {
+                // 登录成功时已有 token，可直接 POST
+                apiFetch('/api/log/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).catch(function() {});
+            } else {
+                // 登录失败时还没 token，后端 AuditFilter 兜底写日志
+                console.log('[LOGIN]', success ? 'OK' : 'DENIED', username, detail);
+            }
+        }
+    </script>
+</body>
+</html>
