@@ -7,7 +7,7 @@ const PAGE_SIZE = 10;
 document.addEventListener('DOMContentLoaded', function() {
     if (!guardAccess()) return;
     if (!checkLogin()) return;
-    loadHistory();
+    loadList();
 });
 
 function checkLogin() {
@@ -43,7 +43,7 @@ function logout() {
     window.location.href = 'index.html';
 }
 
-function loadHistory() {
+function loadList() {
     apiFetch('/api/borrow')
     .then(function(r) { return r.json(); })
     .then(function(list) {
@@ -54,12 +54,12 @@ function loadHistory() {
         }
         allBorrows = borrows;
         renderStats();
-        applyFilter();
+        filterList();
     })
     .catch(function() {
         allBorrows = [];
         renderStats();
-        applyFilter();
+        filterList();
     });
 }
 
@@ -105,7 +105,7 @@ function overdueDays(b) {
     return diff > 0 ? diff : 0;
 }
 
-function applyFilter() {
+function filterList() {
     const status = document.getElementById('statusFilter').value;
     const keyword = document.getElementById('keyword').value.trim().toLowerCase();
     const from = document.getElementById('dateFrom').value;
@@ -136,7 +136,7 @@ function resetFilter() {
     document.getElementById('keyword').value = '';
     document.getElementById('dateFrom').value = '';
     document.getElementById('dateTo').value = '';
-    applyFilter();
+    filterList();
 }
 
 function gotoPage(page) {
@@ -205,7 +205,7 @@ function renewBook(id) {
     .then(function(r) { return r.json(); })
     .then(function(data) {
         alert(data.message || (data.success ? '续借成功' : '续借失败'));
-        if (data.success) loadHistory();
+        if (data.success) loadList();
     })
     .catch(function() { alert('续借失败'); });
 }
@@ -216,12 +216,12 @@ function returnBook(id) {
     .then(function(r) { return r.json(); })
     .then(function(data) {
         alert(data.message || (data.success ? '归还成功' : '归还失败'));
-        if (data.success) loadHistory();
+        if (data.success) loadList();
     })
     .catch(function() { alert('归还失败'); });
 }
 
-function exportHistory() {
+function exportList() {
     if (filteredBorrows.length === 0) {
         alert('当前没有可导出的记录');
         return;

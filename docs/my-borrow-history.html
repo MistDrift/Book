@@ -44,7 +44,7 @@
         <main class="main-content">
             <div class="page-header">
                 <h2>我的借阅历史</h2>
-                <button class="btn btn-primary" onclick="exportHistory()">导出记录</button>
+                <button class="btn btn-primary" onclick="exportList()">导出记录</button>
             </div>
 
             <div class="stats">
@@ -79,16 +79,16 @@
             </div>
 
             <div class="filter-section">
-                <select id="statusFilter" onchange="applyFilter()">
+                <select id="statusFilter" onchange="filterList()">
                     <option value="">全部状态</option>
                     <option value="0">借阅中</option>
                     <option value="1">已归还</option>
                     <option value="overdue">已逾期</option>
                 </select>
-                <input type="text" id="keyword" placeholder="搜索书名 / 作者 / 分类" oninput="applyFilter()" style="padding:8px 12px;border:1px solid #ddd;border-radius:4px;font-size:14px;">
-                <input type="date" id="dateFrom" onchange="applyFilter()" title="借阅起始日期">
+                <input type="text" id="keyword" placeholder="搜索书名 / 作者 / 分类" oninput="filterList()" style="padding:8px 12px;border:1px solid #ddd;border-radius:4px;font-size:14px;">
+                <input type="date" id="dateFrom" onchange="filterList()" title="借阅起始日期">
                 <span style="line-height:38px;color:#999;">至</span>
-                <input type="date" id="dateTo" onchange="applyFilter()" title="借阅结束日期">
+                <input type="date" id="dateTo" onchange="filterList()" title="借阅结束日期">
                 <button class="btn btn-secondary" onclick="resetFilter()">重置</button>
             </div>
 

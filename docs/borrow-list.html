@@ -45,7 +45,7 @@
             <div class="page-header">
                 <h2>借阅管理</h2>
                 <div>
-                    <button class="btn btn-secondary" onclick="exportBorrows()">导出记录</button>
+                    <button class="btn btn-secondary" onclick="exportList()">导出记录</button>
                     <button class="btn btn-primary" onclick="showBorrowModal()" id="borrowBtn">借阅图书</button>
                 </div>
             </div>
@@ -84,7 +84,7 @@
                 <h3>借阅图书</h3>
                 <button class="close-btn" onclick="closeBorrowModal()">&times;</button>
             </div>
-            <form id="borrowForm" onsubmit="submitBorrowForm(); return false;">
+            <form id="borrowForm" onsubmit="submitBorrow(); return false;">
                 <div class="form-group" id="userSelectGroup" style="display:none;">
                     <label for="borrowUser">借阅人</label>
                     <select id="borrowUser" required>

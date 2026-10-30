@@ -204,8 +204,8 @@ function showBorrowModal() {
     // 管理员可代任意读者借阅，普通读者只能借给自己
     const admin = isAdmin(currentUser);
     document.getElementById('userSelectGroup').style.display = admin ? 'block' : 'none';
-    loadBookOptions();
-    if (admin) loadUserOptions();
+    loadBooks();
+    if (admin) loadUsers();
 }
 
 function closeBorrowModal() {
@@ -218,7 +218,7 @@ document.addEventListener('click', function(e) {
     if (e.target && e.target.id === 'borrowModal') closeBorrowModal();
 });
 
-function loadBookOptions() {
+function loadBooks() {
     const sel = document.getElementById('bookSelect');
     sel.innerHTML = '<option value="">加载中...</option>';
     apiFetch('/api/book')
@@ -238,7 +238,7 @@ function loadBookOptions() {
     .catch(() => { sel.innerHTML = '<option value="">图书加载失败</option>'; });
 }
 
-function loadUserOptions() {
+function loadUsers() {
     const sel = document.getElementById('borrowUser');
     sel.innerHTML = '<option value="">加载中...</option>';
     apiFetch('/api/user')
@@ -252,7 +252,7 @@ function loadUserOptions() {
     .catch(() => { sel.innerHTML = '<option value="">用户加载失败</option>'; });
 }
 
-function submitBorrowForm() {
+function submitBorrow() {
     const bookId = document.getElementById('bookSelect').value;
     const userId = document.getElementById('borrowUser').value;
     if (!bookId) { alert('请选择要借阅的图书'); return; }
@@ -275,7 +275,7 @@ function submitBorrowForm() {
 
 // ========== 导出当前筛选结果 ==========
 
-function exportBorrows() {
+function exportList() {
     const list = currentBorrows;
     if (!Array.isArray(list) || list.length === 0) {
         alert('当前没有可导出的记录');
