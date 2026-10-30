@@ -13,10 +13,13 @@
 第一步：必做安全改动（上线不能不改！）
 =======================================================
 1) 改数据库用户名/密码
-   当前 JdbcUtil 里写死 root/123456 —— 生产环境必须改：
+   当前默认 root/root@root（可改）：在 classes 目录旁放 db.properties，无需重新编译：
+   db.url=jdbc:mysql://localhost:3306/db_book?useSSL=false&serverTimezone=UTC&characterEncoding=utf8&allowPublicKeyRetrieval=true
+   db.username=bookstore
+   db.password=你的强密码
+   建账号：
    GRANT ALL ON db_book.* TO 'bookstore'@'localhost' IDENTIFIED BY '你的强密码';
    FLUSH PRIVILEGES;
-   然后改源码 util/JdbcUtil.java 里 USER/PASS → 重新编译 classes/
 
 2) 改前端 API_BASE
    deploy/webapp/js/config.js 第一行：
@@ -87,13 +90,18 @@ server {
     # 后端 API 反代
     location /api/ {
         proxy_pass http://127.0.0.1:8080/api/;
-        proxy_set_header Host System.Management.Automation.Internal.Host.InternalHost;
-        proxy_set_header X-Real-IP ;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+    # 图书封面图片反代
+    location /upload/ {
+        proxy_pass http://127.0.0.1:8080/upload/;
     }
     # 静态前端
     location / {
         root /opt/bookstore/webapp;
-        try_files  / /index.html;
+        try_files $uri /index.html;
     }
 }
 # HTTPS: certbot certonly --nginx -d bookstore.yourdomain.com
