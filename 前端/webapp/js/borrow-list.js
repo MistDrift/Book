@@ -1,4 +1,5 @@
 let currentUser = null;
+let currentBorrows = [];
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('borrow-list.js 加载完成');
@@ -76,7 +77,8 @@ function loadBorrows() {
     apiFetch('/api/borrow')
     .then(response => response.json())
     .then(borrows => {
-        renderBorrows(filterBorrows(Array.isArray(borrows) ? borrows : [], filter));
+        currentBorrows = filterBorrows(Array.isArray(borrows) ? borrows : [], filter);
+        renderBorrows(currentBorrows);
     })
     .catch(() => {
         console.log('使用mock数据');
@@ -84,7 +86,8 @@ function loadBorrows() {
         if (currentUser && !isAdmin(currentUser)) {
             filteredBorrows = mockBorrows.filter(b => b.username === currentUser.username);
         }
-        renderBorrows(filterBorrows(filteredBorrows, filter));
+        currentBorrows = filterBorrows(filteredBorrows, filter);
+        renderBorrows(currentBorrows);
     });
 }
 
@@ -105,7 +108,7 @@ function renderBorrows(borrows) {
     tbody.innerHTML = '';
     
     if (!Array.isArray(borrows) || borrows.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">暂无借阅记录</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">暂无借阅记录</td></tr>';
         return;
     }
 
@@ -123,6 +126,8 @@ function renderBorrows(borrows) {
              <button class="btn btn-edit" onclick="returnBook(${borrow.id})">归还</button>` : '-';
 
         row.innerHTML = `
+            <td><img src="${coverUrl(borrow.bookImage)}" alt="封面" onerror="onCoverError(this)"
+                 style="width:44px;height:60px;object-fit:cover;border-radius:4px;background:#eef2f7;"></td>
             <td>${borrow.bookTitle || '未知'}</td>
             <td>${borrow.username || '未知'}</td>
             <td>${formatDate(borrow.borrowDate)}</td>
@@ -195,14 +200,17 @@ function showBorrowModal() {
     if (!modal) return;
     document.getElementById('borrowForm').reset();
     modal.style.display = 'flex';
-    const firstInput = document.getElementById('borrowBookId');
-    if (firstInput) firstInput.focus();
+
+    // 管理员可代任意读者借阅，普通读者只能借给自己
+    const admin = isAdmin(currentUser);
+    document.getElementById('userSelectGroup').style.display = admin ? 'block' : 'none';
+    loadBookOptions();
+    if (admin) loadUserOptions();
 }
 
 function closeBorrowModal() {
     const modal = document.getElementById('borrowModal');
-    if (!modal) return;
-    modal.style.display = 'none';
+    if (modal) modal.style.display = 'none';
 }
 
 // 点击模态框遮罩关闭
@@ -210,14 +218,52 @@ document.addEventListener('click', function(e) {
     if (e.target && e.target.id === 'borrowModal') closeBorrowModal();
 });
 
+function loadBookOptions() {
+    const sel = document.getElementById('bookSelect');
+    sel.innerHTML = '<option value="">加载中...</option>';
+    apiFetch('/api/book')
+    .then(r => r.json())
+    .then(books => {
+        const list = Array.isArray(books) ? books : [];
+        if (list.length === 0) {
+            sel.innerHTML = '<option value="">暂无可借图书</option>';
+            return;
+        }
+        sel.innerHTML = '<option value="">请选择图书</option>' + list.map(b => {
+            const stock = b.stock || 0;
+            return `<option value="${b.id}" ${stock <= 0 ? 'disabled' : ''}>` +
+                   `${b.title}（${b.author || '未知'}，库存 ${stock}）</option>`;
+        }).join('');
+    })
+    .catch(() => { sel.innerHTML = '<option value="">图书加载失败</option>'; });
+}
+
+function loadUserOptions() {
+    const sel = document.getElementById('borrowUser');
+    sel.innerHTML = '<option value="">加载中...</option>';
+    apiFetch('/api/user')
+    .then(r => r.json())
+    .then(users => {
+        const list = Array.isArray(users) ? users : [];
+        sel.innerHTML = '<option value="">请选择借阅人</option>' + list.map(u =>
+            `<option value="${u.id}">${u.username}（${roleName(u.role)}）</option>`
+        ).join('');
+    })
+    .catch(() => { sel.innerHTML = '<option value="">用户加载失败</option>'; });
+}
+
 function submitBorrowForm() {
-    const bookId = document.getElementById('borrowBookId').value;
-    const userId = document.getElementById('borrowUserId').value;
-    if (!bookId || !userId) { alert('请填写完整信息'); return; }
+    const bookId = document.getElementById('bookSelect').value;
+    const userId = document.getElementById('borrowUser').value;
+    if (!bookId) { alert('请选择要借阅的图书'); return; }
+    if (isAdmin(currentUser) && !userId) { alert('请选择借阅人'); return; }
+
+    let body = 'bookId=' + encodeURIComponent(bookId);
+    if (isAdmin(currentUser) && userId) body += '&userId=' + encodeURIComponent(userId);
+
     apiFetch('/api/borrow/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookId: parseInt(bookId, 10), userId: parseInt(userId, 10) })
+        body: body
     })
     .then(r => r.json())
     .then(d => {
@@ -225,4 +271,27 @@ function submitBorrowForm() {
         if (d.success) { closeBorrowModal(); loadBorrows(); }
     })
     .catch(() => alert('借阅登记失败，请稍后重试'));
+}
+
+// ========== 导出当前筛选结果 ==========
+
+function exportBorrows() {
+    const list = currentBorrows;
+    if (!Array.isArray(list) || list.length === 0) {
+        alert('当前没有可导出的记录');
+        return;
+    }
+    const headers = ['书名', '作者', '分类', '借阅人', '借阅日期', '应还日期', '归还日期', '状态'];
+    const rows = list.map(b => [
+        b.bookTitle || '',
+        b.bookAuthor || '',
+        b.bookCategory || '',
+        b.username || '',
+        formatDate(b.borrowDate),
+        formatDate(b.dueDate),
+        formatDate(b.returnDate),
+        b.status === 1 ? '已归还' : (isOverdue(b) ? '已逾期' : '借阅中')
+    ]);
+    const stamp = new Date().toISOString().slice(0, 10);
+    exportCsv('借阅记录_' + stamp + '.csv', headers, rows);
 }

@@ -24,6 +24,7 @@
                 <li><a href="book-list.html" class="admin-only" style="display:none">图书管理</a></li>
                 <li><a href="book-search.html">图书查询</a></li>
                 <li><a href="borrow-list.html" class="active">借阅管理</a></li>
+                <li><a href="my-borrow-history.html">我的借阅历史</a></li>
                 <li><a href="borrow-apply.html">借阅申请</a></li>
                 <li><a href="reserve.html">预约管理</a></li>
                 <li><a href="fine.html">罚金管理</a></li>
@@ -43,7 +44,10 @@
         <main class="main-content">
             <div class="page-header">
                 <h2>借阅管理</h2>
-                <button class="btn btn-primary" onclick="showBorrowModal()" id="borrowBtn">借阅图书</button>
+                <div>
+                    <button class="btn btn-secondary" onclick="exportBorrows()">导出记录</button>
+                    <button class="btn btn-primary" onclick="showBorrowModal()" id="borrowBtn">借阅图书</button>
+                </div>
             </div>
             
             <div class="filter-section">
@@ -58,6 +62,7 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th>封面</th>
                         <th>书名</th>
                         <th>借阅人</th>
                         <th>借阅日期</th>
@@ -79,7 +84,12 @@
                 <h3>借阅图书</h3>
                 <button class="close-btn" onclick="closeBorrowModal()">&times;</button>
             </div>
-            <form id="borrowForm">
+            <form id="borrowForm" onsubmit="submitBorrowForm(); return false;">
+                <div class="form-group" id="userSelectGroup" style="display:none;">
+                    <label for="borrowUser">借阅人</label>
+                    <select id="borrowUser" required>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="bookSelect">选择图书</label>
                     <select id="bookSelect" required>

@@ -106,7 +106,7 @@ function renderBooks(books) {
         card.onclick = () => showBookDetail(book);
         card.innerHTML = `
             <div class="book-image">
-                <img src="${resolveImage(book.image) || 'https://picsum.photos/200/300?random=book'}" alt="${book.title}">
+                <img src="${coverUrl(book.image)}" alt="${book.title}" onerror="onCoverError(this)">
             </div>
             <div class="book-info">
                 <h3 class="book-title">${book.title}</h3>
@@ -128,7 +128,9 @@ function showBookDetail(book) {
     currentSelectedBook = book;
     const modal = document.getElementById('bookDetailModal');
     
-    document.getElementById('detailImage').src = resolveImage(book.image) || 'https://picsum.photos/300/400?random=book';
+    const detailImg = document.getElementById('detailImage');
+    detailImg.src = coverUrl(book.image);
+    detailImg.onerror = function() { onCoverError(detailImg); };
     document.getElementById('detailTitle').textContent = book.title;
     document.getElementById('detailAuthor').textContent = book.author || '未知';
     document.getElementById('detailISBN').textContent = book.isbn || '-';

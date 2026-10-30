@@ -69,7 +69,13 @@ public class BorrowServlet extends BaseApiServlet {
             json(resp, 400, fail("缺少 bookId 参数"));
             return;
         }
-        Map<String, Object> result = borrowService.borrow(user.getId(), bookId);
+        // 管理员可代读者借阅（传 userId）；普通读者只能为自己借阅
+        Integer borrowerId = user.getId();
+        if (isAdmin(user)) {
+            Integer targetUserId = intParam(req, "userId");
+            if (targetUserId != null) borrowerId = targetUserId;
+        }
+        Map<String, Object> result = borrowService.borrow(borrowerId, bookId);
         writeResult(resp, result);
     }
 

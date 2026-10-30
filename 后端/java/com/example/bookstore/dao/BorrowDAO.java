@@ -36,6 +36,9 @@ public class BorrowDAO {
         // JOIN 字段
         b.setUsername(rs.getString("username"));
         b.setBookTitle(rs.getString("book_title"));
+        b.setBookImage(rs.getString("book_image"));
+        b.setBookAuthor(rs.getString("book_author"));
+        b.setBookCategory(rs.getString("book_category"));
         return b;
     }
 
@@ -89,26 +92,30 @@ public class BorrowDAO {
     }
 
     public List<Borrow> findAll() {
-        String sql = "SELECT b.*, u.username, bo.title AS book_title FROM tb_borrow b " +
+        String sql = "SELECT b.*, u.username, bo.title AS book_title, bo.image AS book_image, " +
+                     "bo.author AS book_author, bo.category AS book_category FROM tb_borrow b " +
                      "JOIN tb_user u ON b.user_id = u.id " +
                      "JOIN tb_book bo ON b.book_id = bo.id ORDER BY b.create_time DESC";
         return query(sql);
     }
 
     public List<Borrow> findByUserId(Integer userId) {
-        return query("SELECT b.*, u.username, bo.title AS book_title FROM tb_borrow b " +
+        return query("SELECT b.*, u.username, bo.title AS book_title, bo.image AS book_image, " +
+                     "bo.author AS book_author, bo.category AS book_category FROM tb_borrow b " +
                      "JOIN tb_user u ON b.user_id = u.id " +
                      "JOIN tb_book bo ON b.book_id = bo.id WHERE b.user_id = ? ORDER BY b.create_time DESC", userId);
     }
 
     public List<Borrow> findByStatus(Integer status) {
-        return query("SELECT b.*, u.username, bo.title AS book_title FROM tb_borrow b " +
+        return query("SELECT b.*, u.username, bo.title AS book_title, bo.image AS book_image, " +
+                     "bo.author AS book_author, bo.category AS book_category FROM tb_borrow b " +
                      "JOIN tb_user u ON b.user_id = u.id " +
                      "JOIN tb_book bo ON b.book_id = bo.id WHERE b.status = ? ORDER BY b.create_time DESC", status);
     }
 
     public Borrow findById(Integer id) {
-        List<Borrow> list = query("SELECT b.*, u.username, bo.title AS book_title FROM tb_borrow b " +
+        List<Borrow> list = query("SELECT b.*, u.username, bo.title AS book_title, bo.image AS book_image, " +
+                     "bo.author AS book_author, bo.category AS book_category FROM tb_borrow b " +
                                   "JOIN tb_user u ON b.user_id = u.id " +
                                   "JOIN tb_book bo ON b.book_id = bo.id WHERE b.id = ?", id);
         return list.isEmpty() ? null : list.get(0);
@@ -134,7 +141,8 @@ public class BorrowDAO {
 
     // V2: 查询应还日期已过且未归还的借阅
     public List<Borrow> findOverdue() {
-        return query("SELECT b.*, u.username, bo.title AS book_title FROM tb_borrow b " +
+        return query("SELECT b.*, u.username, bo.title AS book_title, bo.image AS book_image, " +
+                     "bo.author AS book_author, bo.category AS book_category FROM tb_borrow b " +
                      "JOIN tb_user u ON b.user_id = u.id " +
                      "JOIN tb_book bo ON b.book_id = bo.id " +
                      "WHERE b.status = 0 AND b.due_date < CURDATE() ORDER BY b.due_date ASC");
@@ -142,7 +150,8 @@ public class BorrowDAO {
 
     // V2: 查询某用户对某书正在借阅中的记录
     public Borrow findActiveByUserAndBook(Integer userId, Integer bookId) {
-        List<Borrow> list = query("SELECT b.*, u.username, bo.title AS book_title FROM tb_borrow b " +
+        List<Borrow> list = query("SELECT b.*, u.username, bo.title AS book_title, bo.image AS book_image, " +
+                     "bo.author AS book_author, bo.category AS book_category FROM tb_borrow b " +
                 "JOIN tb_user u ON b.user_id = u.id " +
                 "JOIN tb_book bo ON b.book_id = bo.id " +
                 "WHERE b.status=0 AND b.user_id=? AND b.book_id=? LIMIT 1", userId, bookId);
@@ -151,7 +160,8 @@ public class BorrowDAO {
 
     // V2: 即将到期（days 天内）且未归还的借阅
     public List<Borrow> findDueSoon(int days) {
-        return query("SELECT b.*, u.username, bo.title AS book_title FROM tb_borrow b " +
+        return query("SELECT b.*, u.username, bo.title AS book_title, bo.image AS book_image, " +
+                     "bo.author AS book_author, bo.category AS book_category FROM tb_borrow b " +
                      "JOIN tb_user u ON b.user_id = u.id " +
                      "JOIN tb_book bo ON b.book_id = bo.id " +
                      "WHERE b.status = 0 AND b.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL ? DAY) " +
@@ -160,7 +170,8 @@ public class BorrowDAO {
 
     // V2: 全部借阅中记录
     public List<Borrow> findActive() {
-        return query("SELECT b.*, u.username, bo.title AS book_title FROM tb_borrow b " +
+        return query("SELECT b.*, u.username, bo.title AS book_title, bo.image AS book_image, " +
+                     "bo.author AS book_author, bo.category AS book_category FROM tb_borrow b " +
                      "JOIN tb_user u ON b.user_id = u.id " +
                      "JOIN tb_book bo ON b.book_id = bo.id " +
                      "WHERE b.status = 0 ORDER BY b.create_time DESC");

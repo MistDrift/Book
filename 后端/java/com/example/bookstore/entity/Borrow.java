@@ -16,6 +16,9 @@ public class Borrow {
     private Timestamp updateTime;
     private String username;
     private String bookTitle;
+    private String bookImage;
+    private String bookAuthor;
+    private String bookCategory;
 
     // V2 新增字段
     private Date dueDate;
@@ -46,6 +49,12 @@ public class Borrow {
     public void setUsername(String username) { this.username = username; }
     public String getBookTitle() { return bookTitle; }
     public void setBookTitle(String bookTitle) { this.bookTitle = bookTitle; }
+    public String getBookImage() { return bookImage; }
+    public void setBookImage(String bookImage) { this.bookImage = bookImage; }
+    public String getBookAuthor() { return bookAuthor; }
+    public void setBookAuthor(String bookAuthor) { this.bookAuthor = bookAuthor; }
+    public String getBookCategory() { return bookCategory; }
+    public void setBookCategory(String bookCategory) { this.bookCategory = bookCategory; }
 
     public Date getDueDate() { return dueDate; }
     public void setDueDate(Date dueDate) { this.dueDate = dueDate; }

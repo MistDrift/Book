@@ -77,6 +77,7 @@
                 <li><a href="book-list.html" class="admin-only" style="display:none">图书管理</a></li>
                 <li><a href="book-search.html">图书查询</a></li>
                 <li><a href="borrow-list.html">借阅管理</a></li>
+                <li><a href="my-borrow-history.html">我的借阅历史</a></li>
                 <li><a href="borrow-apply.html">借阅申请</a></li>
                 <li><a href="reserve.html">预约管理</a></li>
                 <li><a href="fine.html">罚金管理</a></li>
@@ -123,6 +124,7 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>封面</th>
                             <th>书名</th>
                             <th>借阅人</th>
                             <th>借阅日期</th>
@@ -234,13 +236,15 @@
             tbody.innerHTML = '';
 
             if (recentBorrows.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">暂无借阅记录</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">暂无借阅记录</td></tr>';
                 return;
             }
             
             recentBorrows.forEach(borrow => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
+                    <td><img src="${coverUrl(borrow.bookImage)}" alt="封面" onerror="onCoverError(this)"
+                         style="width:40px;height:54px;object-fit:cover;border-radius:4px;background:#eef2f7;"></td>
                     <td>${borrow.bookTitle || '未知'}</td>
                     <td>${borrow.username || '未知'}</td>
                     <td>${formatDate(borrow.borrowDate)}</td>

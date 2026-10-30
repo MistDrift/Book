@@ -1,5 +1,5 @@
 // 后端 API 地址：前后端分离部署时改成后端实际地址
-const API_BASE = window.location.protocol + '//' + window.location.hostname + ':8080';
+const API_BASE = 'http://localhost:8080';
 
 // 四种角色常量，与后端 Roles.java / tb_user.role 保持一致
 const Roles = { ADMIN: 1, STUDENT: 2, TEACHER: 3, SOCIAL: 0 };
@@ -45,6 +45,52 @@ function resolveImage(url) {
     return API_BASE + url;
 }
 
+// 封面缺失或加载失败时的占位图（内联 SVG，不依赖网络）
+const COVER_FALLBACK = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="160" viewBox="0 0 120 160">' +
+    '<rect width="120" height="160" fill="#eef2f7"/>' +
+    '<rect x="26" y="46" width="68" height="68" rx="6" fill="#cfd8e3"/>' +
+    '<path d="M42 96l14-16 10 12 8-8 14 18z" fill="#a8b6c7"/>' +
+    '<text x="60" y="132" font-size="12" fill="#8b9aab" text-anchor="middle">暂无封面</text>' +
+    '</svg>'
+);
+
+// 统一的封面地址：有图用图，没图用占位图
+function coverUrl(url) {
+    return resolveImage(url) || COVER_FALLBACK;
+}
+
+// 图片加载失败时回退到占位图
+function onCoverError(img) {
+    img.onerror = null;
+    img.src = COVER_FALLBACK;
+}
+
+/**
+ * 导出 CSV（Excel 可直接打开，含 UTF-8 BOM）
+ * @param {string} filename 文件名
+ * @param {string[]} headers 表头
+ * @param {Array<Array<string|number>>} rows 数据行
+ */
+function exportCsv(filename, headers, rows) {
+    var esc = function(v) {
+        var s = (v === null || v === undefined) ? '' : String(v);
+        if (/[",\r\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+        return s;
+    };
+    var lines = [headers.map(esc).join(',')];
+    rows.forEach(function(r) { lines.push(r.map(esc).join(',')); });
+    var blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+}
+
 function getToken() {
     var t = localStorage.getItem('token') || '';
     // 旧版 mock 登录遗留的假 token 一律视为未登录
@@ -86,6 +132,7 @@ const PAGE_ROLES = {
     'home.html':       [0,1,2,3],
     'book-search.html':[0,1,2,3],
     'borrow-list.html':[0,1,2,3],
+    'my-borrow-history.html':[0,1,2,3],
     'borrow-apply.html':[0,1,2,3],
     'reserve.html':    [0,1,2,3],
     'fine.html':       [0,1,2,3],

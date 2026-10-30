@@ -145,7 +145,7 @@ function renderBooks(books) {
         ` : '<td>-</td>';
         
         row.innerHTML = `
-            <td><img src="${resolveImage(book.image) || 'https://picsum.photos/50/50?random=book'}" alt="${book.title || '封面'}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;"></td>
+            <td><img src="${coverUrl(book.image)}" alt="${book.title || '封面'}" onerror="onCoverError(this)" style="width:50px;height:50px;object-fit:cover;border-radius:4px;"></td>
             <td>${book.isbn || '-'}</td>
             <td>${book.title || '未知'}</td>
             <td>${book.author || '未知'}</td>
