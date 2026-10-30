@@ -1,5 +1,12 @@
-// 后端 API 地址：前后端分离部署时改成后端实际地址
-const API_BASE = 'http://localhost:8080';
+// 后端 API 地址（演示版由 demo-mock.js 拦截 /api/* 请求，此值仅用于路径判断）
+// 1) 本地开发（前端 5500）→ 自动指向 http://<hostname>:8080
+// 2) nginx 反代同一域名（80/443）→ 走同源相对路径 /api
+// 3) 需要自定义时，在引入本文件之前写：<script>window.API_BASE='http://x.x.x.x:8080'</script>
+const API_BASE = (typeof window.API_BASE === 'string') ? window.API_BASE : (function() {
+    const p = window.location.port;
+    if (p === '' || p === '80' || p === '443') return '';
+    return window.location.protocol + '//' + window.location.hostname + ':8080';
+})();
 
 // 四种角色常量，与后端 Roles.java / tb_user.role 保持一致
 const Roles = { ADMIN: 1, STUDENT: 2, TEACHER: 3, SOCIAL: 0 };

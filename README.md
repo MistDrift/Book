@@ -2,6 +2,15 @@
 
 面向四类角色（管理员 / 教师 / 线上学员 / 社会人员）的图书借阅管理系统，后端为原生 Servlet + Jetty + MySQL 8，前端为纯 HTML/CSS/JavaScript（fetch 调用 REST API），前后端分离部署。
 
+## 在线演示（GitHub Pages）
+
+仓库根目录的 `docs/` 是**纯前端演示版**：`docs/js/demo-mock.js` 在浏览器内拦截全部 `/api/*` 请求并返回内置假数据，因此不需要后端和数据库即可完整操作界面。
+
+- 演示地址：<https://mistdrift.github.io/Book/>（需在仓库 Settings → Pages 中将 Source 设为 `Deploy from a branch`、分支 `master`、目录 `/docs`）
+- 演示账号：`admin/admin123`、`student1/student123`、`teacher1/teacher123`、`user1/user123`
+- 演示数据每次刷新重置；写操作（借阅/归还/续借/缴费/标记已读等）会在内存中真实生效
+- `前端/`、`后端/`、`数据库/` 为真实可运行版本，与演示版互不影响
+
 ## 功能模块
 
 | 模块 | 说明 |
