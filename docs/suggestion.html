@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书管理系统 - 图书荐购</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">📚 图书管理系统</div>
+            <div class="user-info">
+                <span id="userName"></span>
+                <span id="userRole"></span>
+                <button class="btn btn-danger" onclick="logout()">退出</button>
+            </div>
+        </header>
+
+        <nav class="sidebar">
+            <ul>
+                <li><a href="home.html">首页</a></li>
+                <li><a href="dashboard.html" class="admin-only" style="display:none">数据看板</a></li>
+                <li><a href="book-list.html" class="admin-only" style="display:none">图书管理</a></li>
+                <li><a href="book-search.html">图书查询</a></li>
+                <li><a href="borrow-list.html">借阅管理</a></li>
+                <li><a href="my-borrow-history.html">我的借阅历史</a></li>
+                <li><a href="borrow-apply.html">借阅申请</a></li>
+                <li><a href="reserve.html">预约管理</a></li>
+                <li><a href="fine.html">罚金管理</a></li>
+                <li><a href="claim.html">遗失理赔</a></li>
+                <li><a href="inventory.html" class="admin-only" style="display:none">馆藏盘点</a></li>
+                <li><a href="suggestion.html" class="active">图书荐购</a></li>
+                <li><a href="notice.html">消息中心</a></li>
+                <li><a href="credit.html">信用管理</a></li>
+                <li><a href="user-list.html" class="admin-only" style="display:none">用户管理</a></li>
+                <li><a href="tier-list.html" class="admin-only" style="display:none">等级管理</a></li>
+                <li><a href="perm-list.html" class="admin-only" style="display:none">权限管理</a></li>
+                <li><a href="log-list.html" class="admin-only" style="display:none">操作日志</a></li>
+                <li><a href="profile.html">个人设置</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2>图书荐购</h2>
+                <button class="btn btn-primary" onclick="showModal()">提交荐购</button>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>荐购人</th>
+                        <th>类型</th>
+                        <th>书名</th>
+                        <th>作者</th>
+                        <th>出版社</th>
+                        <th>价格(元)</th>
+                        <th>推荐理由</th>
+                        <th>状态</th>
+                        <th>点赞</th>
+                        <th>处理备注</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="suggestionTable">
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <div class="modal" id="suggestionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>提交荐购</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="suggestionForm">
+                <div class="form-group">
+                    <label for="sgType">荐购类型</label>
+                    <select id="sgType">
+                        <option value="2">新增图书</option>
+                        <option value="1">补充库存</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sgTitle">书名 *</label>
+                    <input type="text" id="sgTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="sgAuthor">作者</label>
+                    <input type="text" id="sgAuthor">
+                </div>
+                <div class="form-group">
+                    <label for="sgPublisher">出版社</label>
+                    <input type="text" id="sgPublisher">
+                </div>
+                <div class="form-group">
+                    <label for="sgIsbn">ISBN</label>
+                    <input type="text" id="sgIsbn">
+                </div>
+                <div class="form-group">
+                    <label for="sgCategory">分类</label>
+                    <input type="text" id="sgCategory">
+                </div>
+                <div class="form-group">
+                    <label for="sgPrice">价格(元)</label>
+                    <input type="number" id="sgPrice" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="sgReason">推荐理由</label>
+                    <textarea id="sgReason"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/demo-mock.js"></script>
+    <script src="js/suggestion.js"></script>
+<script>if(!guardAccess()){}</script>
+</body>
+</html>

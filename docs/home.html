@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书管理系统 - 首页</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        
+        .container { display: flex; min-height: 100vh; }
+        
+        .header {
+            position: fixed; top: 0; left: 250px; right: 0; height: 60px;
+            background: white; display: flex; justify-content: space-between;
+            align-items: center; padding: 0 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        
+        .sidebar {
+            width: 250px; background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+            min-height: 100vh; padding-top: 60px; position: fixed; left: 0; top: 0;
+        }
+        
+        .sidebar ul { list-style: none; }
+        .sidebar ul li a {
+            display: block; padding: 15px 20px; color: #ecf0f1; text-decoration: none;
+            font-size: 14px; transition: background 0.3s;
+        }
+        .sidebar ul li a:hover, .sidebar ul li a.active { background: rgba(255,255,255,0.1); }
+        
+        .main-content {
+            margin-left: 250px; margin-top: 60px; padding: 30px; width: calc(100% - 250px);
+        }
+        
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; align-items: center; }
+        .stat-icon { font-size: 48px; margin-right: 20px; }
+        .stat-value { font-size: 32px; font-weight: bold; color: #333; }
+        .stat-label { font-size: 14px; color: #666; }
+        
+        .recent-section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .recent-section h3 { margin-bottom: 15px; color: #333; }
+        
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .table th { background: #f8f9fa; font-weight: 600; color: #555; }
+        .table tr:hover { background: #f8f9fa; }
+        
+        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; transition: background 0.3s; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-danger:hover { background: #c0392b; }
+        
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-info span { font-size: 14px; }
+        .user-info span:first-child { font-weight: 600; }
+        
+        .status-borrowing { color: #f39c12; font-weight: 600; }
+        .status-returned { color: #27ae60; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">📚 图书管理系统</div>
+            <div class="user-info">
+                <span id="userName"></span>
+                <span id="userRole"></span>
+                <button class="btn btn-danger" onclick="logout()">退出</button>
+            </div>
+        </header>
+        
+        <nav class="sidebar">
+            <ul>
+                <li><a href="home.html" class="active">首页</a></li>
+                <li><a href="dashboard.html" class="admin-only" style="display:none">数据看板</a></li>
+                <li><a href="book-list.html" class="admin-only" style="display:none">图书管理</a></li>
+                <li><a href="book-search.html">图书查询</a></li>
+                <li><a href="borrow-list.html">借阅管理</a></li>
+                <li><a href="my-borrow-history.html">我的借阅历史</a></li>
+                <li><a href="borrow-apply.html">借阅申请</a></li>
+                <li><a href="reserve.html">预约管理</a></li>
+                <li><a href="fine.html">罚金管理</a></li>
+                <li><a href="claim.html">遗失理赔</a></li>
+                <li><a href="inventory.html" class="admin-only" style="display:none">馆藏盘点</a></li>
+                <li><a href="suggestion.html">图书荐购</a></li>
+                <li><a href="notice.html">消息中心</a></li>
+                <li><a href="credit.html">信用管理</a></li>
+                <li><a href="user-list.html" class="admin-only" style="display:none">用户管理</a></li>
+                <li><a href="tier-list.html" class="admin-only" style="display:none">等级管理</a></li>
+                <li><a href="perm-list.html" class="admin-only" style="display:none">权限管理</a></li>
+                <li><a href="log-list.html" class="admin-only" style="display:none">操作日志</a></li>
+                <li><a href="profile.html">个人设置</a></li>
+            </ul>
+        </nav>
+        
+        <main class="main-content">
+            <h2>欢迎使用图书管理系统</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📖</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="bookCount">0</div>
+                        <div class="stat-label">图书总数</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="borrowCount">0</div>
+                        <div class="stat-label">借阅中</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="userCount">0</div>
+                        <div class="stat-label">用户总数</div>
+                    </div>
+                </div>
+            </div>
+            <div class="recent-section">
+                <h3>最近借阅</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>封面</th>
+                            <th>书名</th>
+                            <th>借阅人</th>
+                            <th>借阅日期</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentBorrows">
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/config.js"></script>
+    <script src="js/demo-mock.js"></script>
+    <script>
+        let currentUser = null;
+
+        function initApp() {
+            console.log('首页加载中...');
+            
+            const storedUser = localStorage.getItem('user');
+            console.log('从localStorage读取的用户:', storedUser);
+            
+            if (!storedUser || !getToken()) {
+                console.log('没有登录信息，跳转到登录页');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            try {
+                currentUser = JSON.parse(storedUser);
+                console.log('解析后的用户对象:', currentUser);
+                
+                if (!currentUser || !currentUser.username) {
+                    console.log('用户数据无效，清除并跳转');
+                    localStorage.removeItem('user');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                // 确保role字段存在
+                if (currentUser.role === undefined) {
+                    currentUser.role = 0;
+                }
+                
+                console.log('用户验证成功:', currentUser.username);
+                
+                // 更新页面UI
+                document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+                document.getElementById('userRole').textContent = roleTag(currentUser.role);
+                
+                // 管理员显示管理员专属菜单
+                document.querySelectorAll('.admin-only').forEach(function(link) {
+                    link.style.display = isAdmin(currentUser) ? 'block' : 'none';
+                });
+                
+                // 加载统计数据
+                loadStats();
+                // 加载借阅记录
+                loadRecentBorrows();
+                
+            } catch (e) {
+                console.error('初始化出错:', e);
+                localStorage.removeItem('user');
+                window.location.href = 'index.html';
+            }
+        }
+
+        function logout() {
+            console.log('退出登录');
+            apiFetch('/api/logout', { method: 'POST' }).catch(function() {});
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        }
+
+        function loadStats() {
+            console.log('加载统计数据');
+            apiFetch('/api/dashboard/?days=30')
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                const summary = data.summary || {};
+                document.getElementById('bookCount').textContent = summary.bookCount != null ? summary.bookCount : '-';
+                document.getElementById('borrowCount').textContent = summary.borrowing != null ? summary.borrowing : '-';
+                document.getElementById('userCount').textContent = summary.userCount != null ? summary.userCount : '-';
+            })
+            .catch(function() {
+                document.getElementById('bookCount').textContent = '-';
+                document.getElementById('borrowCount').textContent = '-';
+                document.getElementById('userCount').textContent = '-';
+            });
+        }
+
+        function loadRecentBorrows() {
+            console.log('加载最近借阅记录');
+            // 后端按身份自动过滤：管理员返回全部，读者只返回自己的借阅
+            apiFetch('/api/borrow')
+            .then(function(response) { return response.json(); })
+            .then(function(borrows) {
+                renderRecentBorrows(Array.isArray(borrows) ? borrows.slice(0, 5) : []);
+            })
+            .catch(function() {
+                renderRecentBorrows([]);
+            });
+        }
+
+        function renderRecentBorrows(recentBorrows) {
+            const tbody = document.getElementById('recentBorrows');
+            tbody.innerHTML = '';
+
+            if (recentBorrows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">暂无借阅记录</td></tr>';
+                return;
+            }
+            
+            recentBorrows.forEach(borrow => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${coverUrl(borrow.bookImage)}" alt="封面" onerror="onCoverError(this)"
+                         style="width:40px;height:54px;object-fit:cover;border-radius:4px;background:#eef2f7;"></td>
+                    <td>${borrow.bookTitle || '未知'}</td>
+                    <td>${borrow.username || '未知'}</td>
+                    <td>${formatDate(borrow.borrowDate)}</td>
+                    <td>${borrow.status === 0 ? '<span class="status-borrowing">借阅中</span>' : '<span class="status-returned">已归还</span>'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+<script>if(!guardAccess()){}</script>
+</body>
+</html>

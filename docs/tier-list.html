@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书管理系统 - 等级管理</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">📚 图书管理系统</div>
+            <div class="user-info">
+                <span id="userName"></span>
+                <span id="userRole"></span>
+                <button class="btn btn-danger" onclick="logout()">退出</button>
+            </div>
+        </header>
+
+        <nav class="sidebar">
+            <ul>
+                <li><a href="home.html">首页</a></li>
+                <li><a href="dashboard.html" class="admin-only" style="display:none">数据看板</a></li>
+                <li><a href="book-list.html" class="admin-only" style="display:none">图书管理</a></li>
+                <li><a href="book-search.html">图书查询</a></li>
+                <li><a href="borrow-list.html">借阅管理</a></li>
+                <li><a href="my-borrow-history.html">我的借阅历史</a></li>
+                <li><a href="borrow-apply.html">借阅申请</a></li>
+                <li><a href="reserve.html">预约管理</a></li>
+                <li><a href="fine.html">罚金管理</a></li>
+                <li><a href="claim.html">遗失理赔</a></li>
+                <li><a href="inventory.html" class="admin-only" style="display:none">馆藏盘点</a></li>
+                <li><a href="suggestion.html">图书荐购</a></li>
+                <li><a href="notice.html">消息中心</a></li>
+                <li><a href="credit.html">信用管理</a></li>
+                <li><a href="user-list.html" class="admin-only" style="display:none">用户管理</a></li>
+                <li><a href="tier-list.html" class="admin-only active" style="display:none">等级管理</a></li>
+                <li><a href="perm-list.html" class="admin-only" style="display:none">权限管理</a></li>
+                <li><a href="log-list.html" class="admin-only" style="display:none">操作日志</a></li>
+                <li><a href="profile.html">个人设置</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2>等级管理</h2>
+                <button class="btn btn-primary" onclick="showModal()">新增等级</button>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>等级名称</th>
+                        <th>最低信用分</th>
+                        <th>最大借阅数</th>
+                        <th>借阅天数</th>
+                        <th>续借次数</th>
+                        <th>续借天数</th>
+                        <th>优先级</th>
+                        <th>逾期费率(元/天)</th>
+                        <th>备注</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="tierTable">
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <div class="modal" id="tierModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">新增等级</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="tierForm">
+                <input type="hidden" id="tierId">
+                <div class="form-group">
+                    <label for="tName">等级名称</label>
+                    <input type="text" id="tName" required>
+                </div>
+                <div class="form-group">
+                    <label for="tMinScore">最低信用分</label>
+                    <input type="number" id="tMinScore" required>
+                </div>
+                <div class="form-group">
+                    <label for="tMaxBorrow">最大借阅数</label>
+                    <input type="number" id="tMaxBorrow" required>
+                </div>
+                <div class="form-group">
+                    <label for="tDays">借阅天数</label>
+                    <input type="number" id="tDays" required>
+                </div>
+                <div class="form-group">
+                    <label for="tRenewMax">续借次数</label>
+                    <input type="number" id="tRenewMax" required>
+                </div>
+                <div class="form-group">
+                    <label for="tRenewDays">续借天数</label>
+                    <input type="number" id="tRenewDays" required>
+                </div>
+                <div class="form-group">
+                    <label for="tPriority">优先级（数字越大优先级越高）</label>
+                    <input type="number" id="tPriority" required>
+                </div>
+                <div class="form-group">
+                    <label for="tRate">逾期费率(元/天)</label>
+                    <input type="number" id="tRate" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="tNote">备注</label>
+                    <input type="text" id="tNote">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/demo-mock.js"></script>
+    <script src="js/tier-list.js"></script>
+<script>if(!guardAccess()){}</script>
+</body>
+</html>

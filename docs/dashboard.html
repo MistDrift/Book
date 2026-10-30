@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书管理系统 - 数据看板</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">📚 图书管理系统</div>
+            <div class="user-info">
+                <span id="userName"></span>
+                <span id="userRole"></span>
+                <button class="btn btn-danger" onclick="logout()">退出</button>
+            </div>
+        </header>
+
+        <nav class="sidebar">
+            <ul>
+                <li><a href="home.html">首页</a></li>
+                <li><a href="dashboard.html" class="admin-only active" style="display:none">数据看板</a></li>
+                <li><a href="book-list.html" class="admin-only" style="display:none">图书管理</a></li>
+                <li><a href="book-search.html">图书查询</a></li>
+                <li><a href="borrow-list.html">借阅管理</a></li>
+                <li><a href="my-borrow-history.html">我的借阅历史</a></li>
+                <li><a href="borrow-apply.html">借阅申请</a></li>
+                <li><a href="reserve.html">预约管理</a></li>
+                <li><a href="fine.html">罚金管理</a></li>
+                <li><a href="claim.html">遗失理赔</a></li>
+                <li><a href="inventory.html" class="admin-only" style="display:none">馆藏盘点</a></li>
+                <li><a href="suggestion.html">图书荐购</a></li>
+                <li><a href="notice.html">消息中心</a></li>
+                <li><a href="credit.html">信用管理</a></li>
+                <li><a href="user-list.html" class="admin-only" style="display:none">用户管理</a></li>
+                <li><a href="tier-list.html" class="admin-only" style="display:none">等级管理</a></li>
+                <li><a href="perm-list.html" class="admin-only" style="display:none">权限管理</a></li>
+                <li><a href="log-list.html" class="admin-only" style="display:none">操作日志</a></li>
+                <li><a href="profile.html">个人设置</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2>数据看板</h2>
+                <div class="tabs">
+                    <button class="tab" data-days="7" onclick="setDays(7)">近7天</button>
+                    <button class="tab active" data-days="30" onclick="setDays(30)">近30天</button>
+                    <button class="tab" data-days="90" onclick="setDays(90)">近90天</button>
+                </div>
+            </div>
+
+            <div class="stats stats-6">
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stBook">-</div>
+                        <div class="stat-label">图书总数</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👤</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stUser">-</div>
+                        <div class="stat-label">注册用户</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📖</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stBorrowing">-</div>
+                        <div class="stat-label">借阅中</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏰</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stOverdue">-</div>
+                        <div class="stat-label">逾期未还</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔖</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stReserve">-</div>
+                        <div class="stat-label">有效预约</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stFine">-</div>
+                        <div class="stat-label">未缴罚金</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-row">
+                <div class="chart-box">
+                    <h3>借阅趋势</h3>
+                    <div class="chart-canvas"><canvas id="chartTrend"></canvas></div>
+                    <div id="fbTrend"></div>
+                </div>
+                <div class="chart-box">
+                    <h3>图书分类分布</h3>
+                    <div class="chart-canvas"><canvas id="chartCategory"></canvas></div>
+                    <div id="fbCategory"></div>
+                </div>
+            </div>
+
+            <div class="chart-row">
+                <div class="chart-box">
+                    <h3>热门图书 Top10</h3>
+                    <div class="chart-canvas"><canvas id="chartTop"></canvas></div>
+                    <div id="fbTop"></div>
+                </div>
+                <div class="chart-box">
+                    <h3>用户身份分布</h3>
+                    <div class="chart-canvas"><canvas id="chartTier"></canvas></div>
+                    <div id="fbTier"></div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>罚金概况</h3>
+                <p>未缴金额：<b id="fineUnpaidAmount">-</b> 元（共 <span id="fineUnpaidCount">-</span> 笔）　　累计已收：<b id="fineCollected">-</b> 元　　累计借阅：<b id="borrowTotal">-</b> 次</p>
+            </div>
+
+            <div class="panel">
+                <h3>最近借阅</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>用户</th>
+                            <th>图书</th>
+                            <th>借阅日期</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentTable">
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/demo-mock.js"></script>
+    <script src="js/dashboard.js"></script>
+<script>if(!guardAccess()){}</script>
+</body>
+</html>
