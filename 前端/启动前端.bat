@@ -3,7 +3,8 @@ rem 前端静态服务（前后端分离）：优先用 Python，未安装则用
 cd /d "%~dp0webapp"
 echo 前端服务启动于 http://localhost:5500
 start http://localhost:5500/index.html
-where python >nul 2>nul
+rem 仅当 python 能真正执行时才用它（Windows 商店占位程序会误判）
+python -c "import sys" >nul 2>nul
 if %errorlevel%==0 (
     python -m http.server 5500
 ) else (
