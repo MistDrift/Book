@@ -201,21 +201,51 @@
             window.location.href = 'index.html';
         }
 
+        function setStat(id, value) {
+            document.getElementById(id).textContent = value != null ? value : '-';
+        }
+
         function loadStats() {
             console.log('加载统计数据');
-            apiFetch('/api/dashboard/?days=30')
+            // 管理员：看板接口可一次取回全站数字
+            if (isAdmin(currentUser)) {
+                apiFetch('/api/dashboard/?days=30')
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    const summary = data.summary || {};
+                    setStat('bookCount', summary.bookCount);
+                    setStat('borrowCount', summary.borrowing);
+                    setStat('userCount', summary.userCount);
+                })
+                .catch(function() {
+                    setStat('bookCount'); setStat('borrowCount'); setStat('userCount');
+                });
+                return;
+            }
+
+            // 读者：看板接口返回 403，改用各角色都可访问的接口
+            // 第三张卡对读者改为「我的信用分」
+            const creditCard = document.getElementById('userCount').closest('.stat-card');
+            if (creditCard) {
+                creditCard.querySelector('.stat-label').textContent = '我的信用分';
+                creditCard.querySelector('.stat-icon').textContent = '⭐';
+            }
+            setStat('userCount', currentUser.credit);
+
+            apiFetch('/api/book')
             .then(function(response) { return response.json(); })
-            .then(function(data) {
-                const summary = data.summary || {};
-                document.getElementById('bookCount').textContent = summary.bookCount != null ? summary.bookCount : '-';
-                document.getElementById('borrowCount').textContent = summary.borrowing != null ? summary.borrowing : '-';
-                document.getElementById('userCount').textContent = summary.userCount != null ? summary.userCount : '-';
+            .then(function(books) {
+                setStat('bookCount', Array.isArray(books) ? books.length : null);
             })
-            .catch(function() {
-                document.getElementById('bookCount').textContent = '-';
-                document.getElementById('borrowCount').textContent = '-';
-                document.getElementById('userCount').textContent = '-';
-            });
+            .catch(function() { setStat('bookCount'); });
+
+            apiFetch('/api/borrow')
+            .then(function(response) { return response.json(); })
+            .then(function(borrows) {
+                const list = Array.isArray(borrows) ? borrows : [];
+                setStat('borrowCount', list.filter(function(b) { return b.status === 0; }).length);
+            })
+            .catch(function() { setStat('borrowCount'); });
         }
 
         function loadRecentBorrows() {
