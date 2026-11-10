@@ -95,11 +95,11 @@ const mockBooks = [
 ];
 
 const mockBorrows = [
-    { id: 1, bookTitle: 'Java编程思想', username: 'user1', borrowDate: '2024-01-10', status: 1 },
-    { id: 2, bookTitle: 'Python编程从入门到实践', username: 'user1', borrowDate: '2024-02-01', status: 1 },
-    { id: 3, bookTitle: '深入理解计算机系统', username: 'user2', borrowDate: '2024-02-10', status: 0 },
-    { id: 4, bookTitle: 'Java编程思想', username: 'user1', borrowDate: '2026-05-20', status: 1 },
-    { id: 5, bookTitle: '深度学习入门', username: 'user1', borrowDate: '2026-05-20', status: 1 }
+    { id: 1, bookTitle: '深入理解计算机系统（原书第3版）', username: 'user1', borrowDate: '2024-01-10', status: 1 },
+    { id: 2, bookTitle: 'Python编程：从入门到实践（第3版）', username: 'user1', borrowDate: '2024-02-01', status: 1 },
+    { id: 3, bookTitle: '算法导论（原书第4版）', username: 'user2', borrowDate: '2024-02-10', status: 0 },
+    { id: 4, bookTitle: '数据库系统概念（原书第7版）', username: 'user1', borrowDate: '2026-05-20', status: 1 },
+    { id: 5, bookTitle: '代码整洁之道', username: 'user1', borrowDate: '2026-05-20', status: 1 }
 ];
 
 const mockUsers = [

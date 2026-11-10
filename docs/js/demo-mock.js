@@ -34,26 +34,26 @@
 
     // ---------------- 图书（20 本，封面取 docs/upload 实存文件 book19~book38）----------------
     var BOOKS = [
-        { id: 1, isbn: '9787111213826', title: 'Java编程思想', author: 'Bruce Eckel', publisher: '机械工业出版社', publishDate: '2007-06-01', category: '编程', price: 108.00, stock: 5, total: 8, location: 'A区-01架', image: '/upload/book19.jpg', description: 'Java 学习必读经典，覆盖语法、并发与泛型。', intro: 'Java 学习必读经典，覆盖语法、并发与泛型。' },
-        { id: 2, isbn: '9787115428577', title: 'Python编程：从入门到实践', author: 'Eric Matthes', publisher: '人民邮电出版社', publishDate: '2016-07-01', category: '编程', price: 79.00, stock: 10, total: 12, location: 'A区-02架', image: '/upload/book20.jpg', description: '零基础入门 Python 的实战教程。', intro: '零基础入门 Python 的实战教程。' },
-        { id: 3, isbn: '9787111544937', title: '深入理解计算机系统', author: 'Randal E.Bryant', publisher: '机械工业出版社', publishDate: '2015-11-01', category: '计算机', price: 129.00, stock: 3, total: 6, location: 'A区-03架', image: '/upload/book21.jpg', description: '从程序员视角剖析计算机系统。', intro: '从程序员视角剖析计算机系统。' },
-        { id: 4, isbn: '9787115461476', title: '深度学习入门', author: '斋藤康毅', publisher: '人民邮电出版社', publishDate: '2017-05-01', category: 'AI', price: 69.00, stock: 8, total: 10, location: 'B区-01架', image: '/upload/book22.jpg', description: '基于 Python 的深度学习入门读物。', intro: '基于 Python 的深度学习入门读物。' },
-        { id: 5, isbn: '9787111075547', title: '设计模式', author: 'Erich Gamma', publisher: '机械工业出版社', publishDate: '2002-09-01', category: '编程', price: 59.00, stock: 4, total: 6, location: 'A区-04架', image: '/upload/book23.jpg', description: 'GoF 二十三种设计模式经典。', intro: 'GoF 二十三种设计模式经典。' },
-        { id: 6, isbn: '9787111407010', title: '算法导论', author: 'Thomas H.Cormen', publisher: '机械工业出版社', publishDate: '2012-12-01', category: '算法', price: 128.00, stock: 2, total: 5, location: 'A区-05架', image: '/upload/book24.jpg', description: '算法领域权威教材。', intro: '算法领域权威教材。' },
-        { id: 7, isbn: '9787115275790', title: 'JavaScript高级程序设计', author: 'Nicholas C.Zakas', publisher: '人民邮电出版社', publishDate: '2012-03-01', category: '编程', price: 99.00, stock: 6, total: 8, location: 'A区-06架', image: '/upload/book25.jpg', description: '前端开发红宝书。', intro: '前端开发红宝书。' },
-        { id: 8, isbn: '9787111234909', title: '数据结构与算法分析', author: 'Mark Allen Weiss', publisher: '机械工业出版社', publishDate: '2014-01-01', category: '算法', price: 69.00, stock: 5, total: 7, location: 'A区-07架', image: '/upload/book26.jpg', description: '数据结构与算法分析教材。', intro: '数据结构与算法分析教材。' },
-        { id: 9, isbn: '9787111453781', title: '计算机网络：自顶向下方法', author: 'James F.Kurose', publisher: '机械工业出版社', publishDate: '2013-06-01', category: '网络', price: 89.00, stock: 3, total: 5, location: 'C区-01架', image: '/upload/book27.jpg', description: '自顶向下的计算机网络教材。', intro: '自顶向下的计算机网络教材。' },
-        { id: 10, isbn: '9787111321330', title: '操作系统概念', author: 'Abraham Silberschatz', publisher: '高等教育出版社', publishDate: '2010-06-01', category: '操作系统', price: 79.00, stock: 4, total: 6, location: 'C区-02架', image: '/upload/book28.jpg', description: '操作系统原理经典教材。', intro: '操作系统原理经典教材。' },
-        { id: 11, isbn: '9787111251217', title: '编译原理', author: 'Alfred V.Aho', publisher: '机械工业出版社', publishDate: '2008-12-01', category: '编译', price: 68.00, stock: 0, total: 4, location: 'C区-03架', image: '/upload/book29.jpg', description: '龙书，编译原理权威著作。', intro: '龙书，编译原理权威著作。' },
-        { id: 12, isbn: '9787111320900', title: '人工智能：一种现代的方法', author: 'Stuart Russell', publisher: '人民邮电出版社', publishDate: '2010-05-01', category: 'AI', price: 128.00, stock: 0, total: 4, location: 'B区-02架', image: '/upload/book30.jpg', description: '人工智能领域经典教材。', intro: '人工智能领域经典教材。' },
-        { id: 13, isbn: '9787115480114', title: 'C++ Primer', author: 'Stanley B.Lippman', publisher: '电子工业出版社', publishDate: '2017-09-01', category: '编程', price: 128.00, stock: 4, total: 6, location: 'A区-08架', image: '/upload/book31.jpg', description: 'C++ 经典教程。', intro: 'C++ 经典教程。' },
-        { id: 14, isbn: '9787111275554', title: 'Effective Java', author: 'Joshua Bloch', publisher: '机械工业出版社', publishDate: '2018-01-01', category: '编程', price: 69.00, stock: 5, total: 7, location: 'A区-09架', image: '/upload/book32.jpg', description: 'Java 最佳实践指南。', intro: 'Java 最佳实践指南。' },
-        { id: 15, isbn: '9787508353937', title: 'Head First设计模式', author: 'Eric Freeman', publisher: '中国电力出版社', publishDate: '2007-09-01', category: '编程', price: 99.00, stock: 3, total: 5, location: 'A区-10架', image: '/upload/book33.jpg', description: '图文并茂的设计模式入门。', intro: '图文并茂的设计模式入门。' },
-        { id: 16, isbn: '9787115423474', title: 'Go语言实战', author: 'William Kennedy', publisher: '人民邮电出版社', publishDate: '2017-03-01', category: '编程', price: 89.00, stock: 4, total: 6, location: 'A区-11架', image: '/upload/book34.jpg', description: 'Go 语言工程实践。', intro: 'Go 语言工程实践。' },
-        { id: 17, isbn: '9787115447587', title: 'Redis设计与实现', author: '黄健宏', publisher: '人民邮电出版社', publishDate: '2014-06-01', category: '数据库', price: 79.00, stock: 3, total: 5, location: 'D区-01架', image: '/upload/book35.jpg', description: 'Redis 内部设计与实现原理。', intro: 'Redis 内部设计与实现原理。' },
-        { id: 18, isbn: '9787111340752', title: 'MySQL技术内幕', author: '姜承尧', publisher: '机械工业出版社', publishDate: '2013-05-01', category: '数据库', price: 69.00, stock: 4, total: 6, location: 'D区-02架', image: '/upload/book36.jpg', description: 'InnoDB 存储引擎剖析。', intro: 'InnoDB 存储引擎剖析。' },
-        { id: 19, isbn: '9787111498847', title: 'Spring实战', author: 'Craig Walls', publisher: '人民邮电出版社', publishDate: '2016-08-01', category: '编程', price: 89.00, stock: 5, total: 7, location: 'A区-12架', image: '/upload/book37.jpg', description: 'Spring 框架实战指南。', intro: 'Spring 框架实战指南。' },
-        { id: 20, isbn: '9787115485706', title: 'Vue.js实战', author: '梁灏', publisher: '人民邮电出版社', publishDate: '2017-11-01', category: '编程', price: 79.00, stock: 6, total: 8, location: 'A区-13架', image: '/upload/book38.jpg', description: 'Vue.js 入门与工程实践。', intro: 'Vue.js 入门与工程实践。' }
+        { id: 1, isbn: '9787111544937', title: '深入理解计算机系统（原书第3版）', author: '兰德尔·E.布莱恩特', publisher: '机械工业出版社', publishDate: '2016-11-01', category: '计算机系统', price: 126.39, stock: 3, total: 5, location: '计算机书架A区', image: '/upload/book19.jpg', description: '从程序员视角讲解计算机系统底层原理，涵盖数据表示、汇编、存储器层次结构等核心内容。', intro: '从程序员视角讲解计算机系统底层原理。' },
+        { id: 2, isbn: '9787111703920', title: '算法导论（原书第4版）', author: '托马斯·H.科尔曼', publisher: '机械工业出版社', publishDate: '2026-05-29', category: '算法', price: 99.00, stock: 5, total: 6, location: '计算机书架A区', image: '/upload/book20.jpg', description: '算法领域经典教材，全面讲解排序、图算法、动态规划等算法设计与分析方法。', intro: '算法领域经典教材。' },
+        { id: 3, isbn: '9787115613639', title: 'Python编程：从入门到实践（第3版）', author: '埃里克·马瑟斯', publisher: '人民邮电出版社', publishDate: '2023-05-01', category: 'Python', price: 109.80, stock: 10, total: 12, location: '计算机书架B区', image: '/upload/book21.jpg', description: 'Python入门经典，从基础语法到项目实战，适合零基础读者系统学习Python。', intro: 'Python 入门经典。' },
+        { id: 4, isbn: '9787111681816', title: '数据库系统概念（原书第7版）', author: '亚伯拉罕·西尔伯沙茨', publisher: '机械工业出版社', publishDate: '2021-06-16', category: '数据库', price: 149.00, stock: 8, total: 10, location: '计算机书架A区', image: '/upload/book22.jpg', description: '数据库领域权威教材，系统讲解关系模型、SQL、事务处理与分布式数据库。', intro: '数据库领域权威教材。' },
+        { id: 5, isbn: '9787115215499', title: '代码整洁之道', author: '罗伯特·C.马丁', publisher: '人民邮电出版社', publishDate: '2010-01-01', category: '软件工程', price: 59.00, stock: 4, total: 6, location: '计算机书架C区', image: '/upload/book23.jpg', description: '软件工匠必读经典，阐述编写整洁、可维护代码的原则与实践。', intro: '编写整洁代码的原则与实践。' },
+        { id: 6, isbn: '9787115545381', title: 'JavaScript高级程序设计（第4版）', author: '马特·弗里斯比', publisher: '人民邮电出版社', publishDate: '2020-09-11', category: 'JavaScript', price: 129.00, stock: 2, total: 5, location: '计算机书架B区', image: '/upload/book24.jpg', description: 'JavaScript权威教程，深入讲解语言特性、DOM、BOM及前端开发高级技术。', intro: '前端开发红宝书。' },
+        { id: 7, isbn: '9787111618331', title: '设计模式：可复用面向对象软件的基础', author: '埃里克·伽玛', publisher: '机械工业出版社', publishDate: '2019-01-01', category: '软件工程', price: 79.00, stock: 6, total: 8, location: '计算机书架C区', image: '/upload/book25.jpg', description: 'GoF设计模式经典著作，总结23种面向对象设计模式及其应用场景。', intro: 'GoF 二十三种设计模式经典。' },
+        { id: 8, isbn: '9787111528395', title: '数据结构与算法分析：Java语言描述（原书第3版）', author: '马克·艾伦·维斯', publisher: '机械工业出版社', publishDate: '2016-03-07', category: '数据结构', price: 79.00, stock: 5, total: 7, location: '计算机书架A区', image: '/upload/book26.jpg', description: '用Java语言系统讲解链表、树、图、哈希表等数据结构及算法分析方法。', intro: '数据结构与算法分析教材。' },
+        { id: 9, isbn: '9787302392644', title: '人月神话（40周年中文纪念版）', author: '弗雷德里克·P.布鲁克斯', publisher: '清华大学出版社', publishDate: '2015-06-01', category: '软件工程', price: 88.00, stock: 3, total: 5, location: '计算机书架C区', image: '/upload/book27.jpg', description: '软件项目管理经典，探讨软件开发中的人力、时间与沟通的本质规律。', intro: '软件项目管理经典。' },
+        { id: 10, isbn: '9787511747235', title: '马克思价值理论研究', author: '[苏] 伊萨克·伊里奇·鲁宾', publisher: '中央编译出版社', publishDate: '2000-01-01', category: 'A 马列', price: 88.00, stock: 4, total: 6, location: '社科书架A区', image: '/upload/book28.jpg', description: '苏联学者鲁宾研究马克思价值理论的代表作。', intro: '马克思价值理论研究。' },
+        { id: 11, isbn: '9787010106861', title: '马克思恩格斯选集', author: '[德] 卡尔·马克思、[德] 弗里德里希·恩格斯', publisher: '人民出版社', publishDate: '2000-01-01', category: 'A 马列', price: 256.00, stock: 0, total: 4, location: '社科书架A区', image: '/upload/book29.jpg', description: '马克思恩格斯重要著作选集，蓝色布面精装本。', intro: '马克思恩格斯选集。' },
+        { id: 12, isbn: '9787010084619', title: '马克思恩格斯文集（第一卷）', author: '卡尔·马克思、弗里德里希·恩格斯', publisher: '人民出版社', publishDate: '2009-01-01', category: 'A 马列', price: 78.00, stock: 0, total: 4, location: '社科书架A区', image: '/upload/book30.jpg', description: '马克思恩格斯文集第一卷，米色布面精装。', intro: '马克思恩格斯文集第一卷。' },
+        { id: 13, isbn: '9787600105335', title: '马克思恩格斯文集（第二卷）', author: '卡尔·马克思、弗里德里希·恩格斯', publisher: '人民出版社', publishDate: '2009-01-01', category: 'A 马列', price: 82.00, stock: 4, total: 6, location: '社科书架A区', image: '/upload/book31.jpg', description: '马克思恩格斯文集第二卷，与第一卷同系列装帧。', intro: '马克思恩格斯文集第二卷。' },
+        { id: 14, isbn: '9787010189871', title: '社会主义从空想到科学的发展', author: '[德] 弗里德里希·恩格斯', publisher: '人民出版社', publishDate: '2018-01-01', category: 'A 马列', price: 32.00, stock: 5, total: 7, location: '社科书架A区', image: '/upload/book32.jpg', description: '恩格斯阐述科学社会主义来源与发展的著作。', intro: '科学社会主义经典。' },
+        { id: 15, isbn: '9787303104819', title: '雇佣劳动与资本', author: '[德] 卡尔·马克思', publisher: '人民出版社', publishDate: '2019-01-01', category: 'A 马列', price: 28.00, stock: 3, total: 5, location: '社科书架A区', image: '/upload/book33.jpg', description: '马克思政治经济学代表作之一，白底单行本。', intro: '马克思政治经济学著作。' },
+        { id: 16, isbn: '9787010189932', title: '马克思恩格斯选集', author: '[德] 卡尔·马克思、[德] 弗里德里希·恩格斯', publisher: '人民出版社', publishDate: '2012-01-01', category: 'A 马列', price: 268.00, stock: 4, total: 6, location: '社科书架A区', image: '/upload/book34.jpg', description: '马克思恩格斯选集，深灰色布面精装本。', intro: '马克思恩格斯选集。' },
+        { id: 17, isbn: '9787010185712', title: '马克思历史理论的研究', author: '[日] 望月清司', publisher: '北京师范大学出版社', publishDate: '2009-01-01', category: 'A 马列', price: 59.00, stock: 3, total: 5, location: '社科书架A区', image: '/upload/book35.jpg', description: '日本学者望月清司研究马克思历史理论的代表作。', intro: '马克思历史理论研究。' },
+        { id: 18, isbn: '9787010140766', title: '雇佣劳动与资本（另一版本）', author: '[德] 卡尔·马克思', publisher: '人民出版社', publishDate: '1972-01-01', category: 'A 马列', price: 1.45, stock: 4, total: 6, location: '社科书架A区', image: '/upload/book36.jpg', description: '马克思政治经济学著作的另一种版本，米色封面。', intro: '马克思政治经济学著作。' },
+        { id: 19, isbn: '9789570825510', title: '1848年至1850年的法兰西阶级斗争', author: '[德] 卡尔·马克思', publisher: '人民出版社', publishDate: '2015-01-01', category: 'A 马列', price: 30.00, stock: 5, total: 7, location: '社科书架A区', image: '/upload/book37.jpg', description: '马克思总结1848—1850年法国阶级斗争的著作。', intro: '马克思历史分析著作。' },
+        { id: 20, isbn: '9787010229751', title: '牟宗三先生全集(全33册)', author: '牟宗三', publisher: '聯經出版事業有限公司', publishDate: '2003-01-01', category: 'B 哲学宗教', price: 7425.00, stock: 6, total: 8, location: '社科书架B区', image: '/upload/book38.jpg', description: '牟宗三先生著作全集，共33册。', intro: '当代新儒家著作全集。' }
     ];
 
     // ---------------- 借阅等级（5 条）----------------
@@ -168,36 +168,36 @@
 
     // ---------------- 预约（8 条）----------------
     var RESERVES = [
-        { id: 1, userId: 3, username: 'student1', bookId: 11, bookTitle: '编译原理', tierName: '普通学员', reserveTime: ago(3), deadline: Date.now() + 5 * DAY, status: 0 },
-        { id: 2, userId: 3, username: 'student1', bookId: 12, bookTitle: '人工智能：一种现代的方法', tierName: '普通学员', reserveTime: ago(5), deadline: Date.now() + 2 * DAY, status: 1 },
-        { id: 3, userId: 6, username: 'user1', bookId: 11, bookTitle: '编译原理', tierName: '社会人员', reserveTime: ago(9), deadline: ago(2), status: 2 },
-        { id: 4, userId: 2, username: 'teacher1', bookId: 12, bookTitle: '人工智能：一种现代的方法', tierName: '教师', reserveTime: ago(4), deadline: Date.now() + 4 * DAY, status: 0 },
-        { id: 5, userId: 4, username: 'student2', bookId: 11, bookTitle: '编译原理', tierName: '普通学员', reserveTime: ago(20), deadline: ago(10), status: 4 },
-        { id: 6, userId: 7, username: 'user2', bookId: 12, bookTitle: '人工智能：一种现代的方法', tierName: '社会人员', reserveTime: ago(30), deadline: ago(18), status: 3 },
-        { id: 7, userId: 3, username: 'student1', bookId: 9, bookTitle: '计算机网络：自顶向下方法', tierName: '普通学员', reserveTime: ago(7), deadline: Date.now() + 3 * DAY, status: 1 },
-        { id: 8, userId: 5, username: 'student3', bookId: 12, bookTitle: '人工智能：一种现代的方法', tierName: '社会人员', reserveTime: ago(1), deadline: Date.now() + 6 * DAY, status: 0 }
+        { id: 1, userId: 3, username: 'student1', bookId: 11, bookTitle: '马克思恩格斯选集', tierName: '普通学员', reserveTime: ago(3), deadline: Date.now() + 5 * DAY, status: 0 },
+        { id: 2, userId: 3, username: 'student1', bookId: 12, bookTitle: '马克思恩格斯文集（第一卷）', tierName: '普通学员', reserveTime: ago(5), deadline: Date.now() + 2 * DAY, status: 1 },
+        { id: 3, userId: 6, username: 'user1', bookId: 11, bookTitle: '马克思恩格斯选集', tierName: '社会人员', reserveTime: ago(9), deadline: ago(2), status: 2 },
+        { id: 4, userId: 2, username: 'teacher1', bookId: 12, bookTitle: '马克思恩格斯文集（第一卷）', tierName: '教师', reserveTime: ago(4), deadline: Date.now() + 4 * DAY, status: 0 },
+        { id: 5, userId: 4, username: 'student2', bookId: 11, bookTitle: '马克思恩格斯选集', tierName: '普通学员', reserveTime: ago(20), deadline: ago(10), status: 4 },
+        { id: 6, userId: 7, username: 'user2', bookId: 12, bookTitle: '马克思恩格斯文集（第一卷）', tierName: '社会人员', reserveTime: ago(30), deadline: ago(18), status: 3 },
+        { id: 7, userId: 3, username: 'student1', bookId: 9, bookTitle: '人月神话（40周年中文纪念版）', tierName: '普通学员', reserveTime: ago(7), deadline: Date.now() + 3 * DAY, status: 1 },
+        { id: 8, userId: 5, username: 'student3', bookId: 12, bookTitle: '马克思恩格斯文集（第一卷）', tierName: '社会人员', reserveTime: ago(1), deadline: Date.now() + 6 * DAY, status: 0 }
     ];
 
     // ---------------- 罚金（8 条）----------------
     var FINES = [
-        { id: 1, userId: 3, username: 'student1', bookTitle: '深入理解计算机系统', amount: 4.50, overdueDays: 15, rate: 0.30, reason: '逾期归还', payStatus: 0, createTime: ago(2), payTime: null },
-        { id: 2, userId: 3, username: 'student1', bookTitle: 'Go语言实战', amount: 6.60, overdueDays: 22, rate: 0.30, reason: '逾期归还', payStatus: 0, createTime: ago(1), payTime: null },
-        { id: 3, userId: 3, username: 'student1', bookTitle: 'Spring实战', amount: 4.00, overdueDays: 10, rate: 0.40, reason: '逾期归还', payStatus: 0, createTime: ago(15), payTime: null },
-        { id: 4, userId: 2, username: 'teacher1', bookTitle: '人工智能：一种现代的方法', amount: 3.00, overdueDays: 10, rate: 0.30, reason: '逾期归还', payStatus: 1, createTime: ago(25), payTime: ago(20) },
-        { id: 5, userId: 4, username: 'student2', bookTitle: '深入理解计算机系统', amount: 2.00, overdueDays: 5, rate: 0.40, reason: '逾期归还', payStatus: 1, createTime: ago(30), payTime: ago(24) },
-        { id: 6, userId: 6, username: 'user1', bookTitle: '数据结构与算法分析', amount: 2.50, overdueDays: 5, rate: 0.50, reason: '逾期归还', payStatus: 0, createTime: ago(6), payTime: null },
-        { id: 7, userId: 7, username: 'user2', bookTitle: '数据结构与算法分析', amount: 2.00, overdueDays: 4, rate: 0.50, reason: '逾期归还', payStatus: 1, createTime: ago(14), payTime: ago(9) },
-        { id: 8, userId: 5, username: 'student3', bookTitle: 'Vue.js实战', amount: 1.50, overdueDays: 3, rate: 0.50, reason: '逾期归还', payStatus: 0, createTime: ago(4), payTime: null }
+        { id: 1, userId: 3, username: 'student1', bookTitle: '深入理解计算机系统（原书第3版）', amount: 4.50, overdueDays: 15, rate: 0.30, reason: '逾期归还', payStatus: 0, createTime: ago(2), payTime: null },
+        { id: 2, userId: 3, username: 'student1', bookTitle: '数据库系统概念（原书第7版）', amount: 6.60, overdueDays: 22, rate: 0.30, reason: '逾期归还', payStatus: 0, createTime: ago(1), payTime: null },
+        { id: 3, userId: 3, username: 'student1', bookTitle: '代码整洁之道', amount: 4.00, overdueDays: 10, rate: 0.40, reason: '逾期归还', payStatus: 0, createTime: ago(15), payTime: null },
+        { id: 4, userId: 2, username: 'teacher1', bookTitle: '马克思恩格斯选集', amount: 3.00, overdueDays: 10, rate: 0.30, reason: '逾期归还', payStatus: 1, createTime: ago(25), payTime: ago(20) },
+        { id: 5, userId: 4, username: 'student2', bookTitle: '深入理解计算机系统（原书第3版）', amount: 2.00, overdueDays: 5, rate: 0.40, reason: '逾期归还', payStatus: 1, createTime: ago(30), payTime: ago(24) },
+        { id: 6, userId: 6, username: 'user1', bookTitle: '数据结构与算法分析：Java语言描述（原书第3版）', amount: 2.50, overdueDays: 5, rate: 0.50, reason: '逾期归还', payStatus: 0, createTime: ago(6), payTime: null },
+        { id: 7, userId: 7, username: 'user2', bookTitle: '数据结构与算法分析：Java语言描述（原书第3版）', amount: 2.00, overdueDays: 4, rate: 0.50, reason: '逾期归还', payStatus: 1, createTime: ago(14), payTime: ago(9) },
+        { id: 8, userId: 5, username: 'student3', bookTitle: 'Python编程：从入门到实践（第3版）', amount: 1.50, overdueDays: 3, rate: 0.50, reason: '逾期归还', payStatus: 0, createTime: ago(4), payTime: null }
     ];
 
     // ---------------- 遗失理赔（6 条）----------------
     var CLAIMS = [
-        { id: 1, userId: 3, username: 'student1', bookTitle: 'Java编程思想', reportDate: ago(6), type: 2, bookPrice: 108.00, depRate: 0.80, amount: 86.40, paid: 0, status: 0, handleRemark: '', payTime: null },
-        { id: 2, userId: 2, username: 'teacher1', bookTitle: '人工智能：一种现代的方法', reportDate: ago(12), type: 1, bookPrice: 128.00, depRate: 1.00, amount: 128.00, paid: 128.00, status: 2, handleRemark: '已按原价赔偿结案', payTime: ago(8) },
-        { id: 3, userId: 4, username: 'student2', bookTitle: '计算机网络：自顶向下方法', reportDate: ago(20), type: 3, bookPrice: 89.00, depRate: 0.60, amount: 53.40, paid: 53.40, status: 2, handleRemark: '读者已自行购买同版本归还', payTime: ago(15) },
-        { id: 4, userId: 6, username: 'user1', bookTitle: '设计模式', reportDate: ago(9), type: 1, bookPrice: 59.00, depRate: 1.00, amount: 59.00, paid: 0, status: 1, handleRemark: '处理中，等待读者确认', payTime: null },
-        { id: 5, userId: 5, username: 'student3', bookTitle: 'Go语言实战', reportDate: ago(3), type: 2, bookPrice: 89.00, depRate: 0.70, amount: 62.30, paid: 0, status: 0, handleRemark: '', payTime: null },
-        { id: 6, userId: 2, username: 'teacher1', bookTitle: 'Redis设计与实现', reportDate: ago(28), type: 2, bookPrice: 79.00, depRate: 0.50, amount: 39.50, paid: 0, status: 3, handleRemark: '证明材料不足，驳回', payTime: null }
+        { id: 1, userId: 3, username: 'student1', bookTitle: '深入理解计算机系统（原书第3版）', reportDate: ago(6), type: 2, bookPrice: 126.39, depRate: 0.80, amount: 101.11, paid: 0, status: 0, handleRemark: '', payTime: null },
+        { id: 2, userId: 2, username: 'teacher1', bookTitle: '算法导论（原书第4版）', reportDate: ago(12), type: 1, bookPrice: 99.00, depRate: 1.00, amount: 99.00, paid: 99.00, status: 2, handleRemark: '已按原价赔偿结案', payTime: ago(8) },
+        { id: 3, userId: 4, username: 'student2', bookTitle: '人月神话（40周年中文纪念版）', reportDate: ago(20), type: 3, bookPrice: 88.00, depRate: 0.60, amount: 52.80, paid: 52.80, status: 2, handleRemark: '读者已自行购买同版本归还', payTime: ago(15) },
+        { id: 4, userId: 6, username: 'user1', bookTitle: '设计模式：可复用面向对象软件的基础', reportDate: ago(9), type: 1, bookPrice: 79.00, depRate: 1.00, amount: 79.00, paid: 0, status: 1, handleRemark: '处理中，等待读者确认', payTime: null },
+        { id: 5, userId: 5, username: 'student3', bookTitle: '数据库系统概念（原书第7版）', reportDate: ago(3), type: 2, bookPrice: 149.00, depRate: 0.70, amount: 104.30, paid: 0, status: 0, handleRemark: '', payTime: null },
+        { id: 6, userId: 2, username: 'teacher1', bookTitle: '代码整洁之道', reportDate: ago(28), type: 2, bookPrice: 59.00, depRate: 0.50, amount: 29.50, paid: 0, status: 3, handleRemark: '证明材料不足，驳回', payTime: null }
     ];
 
     // ---------------- 荐购（8 条）----------------
@@ -216,12 +216,12 @@
     var NOTICES = [
         { id: 1, userId: 1, username: 'admin', type: 4, title: '系统维护通知', content: '本周日凌晨 2:00-4:00 进行系统升级，期间暂停借阅服务。', createTime: ago(1), readFlag: 0 },
         { id: 2, userId: 1, username: 'admin', type: 4, title: '月度盘点安排', content: '本月底将进行全馆盘点，请提前整理在架图书。', createTime: ago(4), readFlag: 1 },
-        { id: 3, userId: 3, username: 'student1', type: 2, title: '图书逾期提醒', content: '您借阅的《深入理解计算机系统》已逾期，请尽快归还。', createTime: ago(1), readFlag: 0 },
-        { id: 4, userId: 3, username: 'student1', type: 1, title: '图书到期提醒', content: '您借阅的《Python编程：从入门到实践》将于 3 天后到期。', createTime: ago(2), readFlag: 0 },
-        { id: 5, userId: 3, username: 'student1', type: 3, title: '预约取书通知', content: '您预约的《人工智能：一种现代的方法》已到馆，请 5 日内取书。', createTime: ago(5), readFlag: 1 },
+        { id: 3, userId: 3, username: 'student1', type: 2, title: '图书逾期提醒', content: '您借阅的《深入理解计算机系统（原书第3版）》已逾期，请尽快归还。', createTime: ago(1), readFlag: 0 },
+        { id: 4, userId: 3, username: 'student1', type: 1, title: '图书到期提醒', content: '您借阅的《Python编程：从入门到实践（第3版）》将于 3 天后到期。', createTime: ago(2), readFlag: 0 },
+        { id: 5, userId: 3, username: 'student1', type: 3, title: '预约取书通知', content: '您预约的《马克思恩格斯文集（第一卷）》已到馆，请 5 日内取书。', createTime: ago(5), readFlag: 1 },
         { id: 6, userId: 3, username: 'student1', type: 5, title: '荐购处理结果', content: '您荐购的《算法导论》已采纳，正在采购中。', createTime: ago(17), readFlag: 1 },
         { id: 7, userId: 2, username: 'teacher1', type: 2, title: '图书逾期提醒', content: '您借阅的图书已逾期，请及时处理。', createTime: ago(3), readFlag: 0 },
-        { id: 8, userId: 4, username: 'student2', type: 1, title: '图书到期提醒', content: '您借阅的《C++ Primer》将于 3 天后到期。', createTime: ago(2), readFlag: 1 },
+        { id: 8, userId: 4, username: 'student2', type: 1, title: '图书到期提醒', content: '您借阅的《Python编程：从入门到实践（第3版）》将于 3 天后到期。', createTime: ago(2), readFlag: 1 },
         { id: 9, userId: 5, username: 'student3', type: 4, title: '信用分调整通知', content: '因逾期归还，您的信用分已被调整，请关注信用记录。', createTime: ago(6), readFlag: 0 },
         { id: 10, userId: 6, username: 'user1', type: 5, title: '荐购处理结果', content: '您荐购的《人类简史》正在审核中。', createTime: ago(8), readFlag: 1 }
     ];
