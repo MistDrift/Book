@@ -230,3 +230,20 @@ function searchBooks() {
         renderBooks([]);
     });
 }
+
+function filterBooks() {
+    const category = document.getElementById('categoryFilter').value;
+    const kw = document.getElementById('searchKeyword').value.trim();
+    apiFetch('/api/book')
+    .then(response => response.json())
+    .then(books => {
+        let list = Array.isArray(books) ? books : [];
+        if (category) list = list.filter(b => b.category === category);
+        if (kw) list = list.filter(b => (b.title + b.author + b.isbn + b.category).indexOf(kw) !== -1);
+        renderBooks(list);
+    })
+    .catch(error => {
+        console.error('筛选图书失败:', error);
+        renderBooks([]);
+    });
+}
